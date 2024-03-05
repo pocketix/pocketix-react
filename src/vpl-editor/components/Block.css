@@ -1,0 +1,14 @@
+.block {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-items: flex-start;
+}
+
+.recommendation-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
