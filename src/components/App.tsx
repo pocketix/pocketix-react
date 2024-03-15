@@ -1,12 +1,10 @@
 import React from "react";
 import "./App.css";
-import {Language, Variable} from "./vpl-editor/model/meta-language.model";
-import {Expression} from "./vpl-editor/components/Expression";
+import {Language} from "../vpl-editor/model/meta-language.model";
 import {PrimeReactProvider} from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
-import {CmdStatement} from "./vpl-editor/components/CmdStatement";
 import "primeicons/primeicons.css";
-import {Program} from "./vpl-editor/components/Program";
+import {Program} from "../vpl-editor/components/Program";
 
 const program = {
 	"header": {},
