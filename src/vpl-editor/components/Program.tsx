@@ -22,6 +22,8 @@ const Program = (props: {
   menu?: ReactNode
 }) => {
   const [program, setProgram] = useState(generateIds(props.program));
+  const [visualProgram, setVisualProgram] = useState(program);
+  const [textProgram, setTextProgram] = useState(props.program);
   const [settings, setSettings] = useState(props?.settings ?? defaultSettings);
   const [language, setLanguage] = useState(props.language);
 
@@ -71,7 +73,7 @@ const Program = (props: {
     setRedoList([...redoList, JSON.stringify(program)]);
     const newUndoList = [...undoList];
     const undoneProgram = (JSON.parse(newUndoList.pop() as string));
-    setProgram(undoneProgram);
+    setAllPrograms(undoneProgram);
     setUndoList(newUndoList);
   };
 
@@ -79,7 +81,7 @@ const Program = (props: {
     setUndoList([...undoList, JSON.stringify(program)]);
     const newRedoList = [...redoList];
     const redoneProgram = (JSON.parse(newRedoList.pop() as string));
-    setProgram(redoneProgram);
+    setAllPrograms(redoneProgram);
     setRedoList(newRedoList);
   };
 
@@ -93,8 +95,30 @@ const Program = (props: {
       setRedoList([]);
     }
 
-    setProgram(newProgram);
+    setAllPrograms(newProgram);
   };
+
+  const updateVisualProgram = (newProgram: ProgramModel) => {
+    setVisualProgram(newProgram);
+
+    if (!settings.common.manualSync) {
+      updateProgram(newProgram);
+    }
+  }
+
+  const updateTextProgram = (newProgram: ProgramModel) => {
+    setTextProgram(newProgram);
+
+    if (!settings.common.manualSync) {
+      updateProgram(newProgram);
+    }
+  }
+
+  const setAllPrograms = (program: ProgramModel) => {
+    setProgram(program);
+    setVisualProgram(program);
+    setTextProgram(removeIds(program));
+  }
 
   const header = <span>Language</span>;
   const confirmLanguageDialog = () => {
@@ -124,7 +148,6 @@ const Program = (props: {
     try {
       const language = JSON.parse(languageString);
       setLanguageSyntaxError(false);
-      console.log("valid", language);
       return language;
     } catch (e) {
       setLanguageSyntaxError(true);
@@ -152,7 +175,7 @@ const Program = (props: {
                                                              checked={settings.visualEditor?.enabled} onClick={onEnableToggleVisual} /> : <></>}
           {settings.menu?.enableToggleVisual ?
             <ToggleButton className="toggle-mobile" onIcon="pi pi-palette" offIcon="pi pi-palette" /> : <></>}
-          {settings.menu?.enableSaveVisual ? <Button icon="pi pi-save" disabled={!settings.common.manualSync}></Button> : <></>}
+          {settings.menu?.enableSaveVisual ? <Button icon="pi pi-save" disabled={!settings.common.manualSync} onClick={() => updateProgram({...visualProgram})}></Button> : <></>}
         </div>
 
         <div className="menu-center">
@@ -166,7 +189,7 @@ const Program = (props: {
         </div>
 
         <div className="menu-right">
-          {settings.menu?.enableSaveText ? <Button icon="pi pi-save" disabled={!settings.common.manualSync}></Button> : <></>}
+          {settings.menu?.enableSaveText ? <Button icon="pi pi-save" disabled={!settings.common.manualSync} onClick={() => updateProgram({...textProgram})}></Button> : <></>}
           {settings.menu?.enableToggleText ?
             <ToggleButton checked={settings.textEditor?.enabled} onClick={onEnableToggleText} offLabel="&nbsp;" onLabel="&nbsp;"
                           className="toggle-desktop" onIcon="pi pi-code" offIcon="pi pi-code" /> : <></>}
@@ -177,12 +200,12 @@ const Program = (props: {
 
       <div className="program">
         {settings.visualEditor?.enabled ? <div className="visual-editor">
-          <Block block={program.block} language={language} level={0}
-                 onUpdate={(block: BlockModel) => updateProgram({...program, block})} key={JSON.stringify(program)}/>
+          <Block block={visualProgram.block} language={language} level={0}
+                 onUpdate={(block: BlockModel) => updateVisualProgram({...program, block})} key={JSON.stringify(program)}/>
         </div> : <></>}
         {settings.textEditor?.enabled ? <div className="text-editor mobile-open">
-          <TextEditor program={removeIds(program)}
-                      onProgramChange={(newProgram: ProgramModel) => updateProgram({...newProgram})} key={JSON.stringify(program)}/>
+          <TextEditor program={textProgram}
+                      onProgramChange={(newProgram: ProgramModel) => updateTextProgram({...newProgram})} key={JSON.stringify(program)}/>
         </div> : <></>}
       </div>
 
