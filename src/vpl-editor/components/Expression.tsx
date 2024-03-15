@@ -74,7 +74,7 @@ const Expression = (props: {
           <Button label="Add" icon="pi pi-plus" disabled={syntaxError} onClick={addVariable}
                   className="p-button-text" />
         </div>
-        <InputTextarea value={expressionString} className={syntaxError ? "error" : ""} ref={textAreaRef}
+        <InputTextarea value={expressionString} className={`text-area ${syntaxError ? "error" : ""}`} ref={textAreaRef}
                        onChange={(e) => {
                          updateExpression(e.target.value);
                        }} rows={5} cols={30} />
