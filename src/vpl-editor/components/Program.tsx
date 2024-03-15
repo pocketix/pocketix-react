@@ -186,7 +186,7 @@ const Program = (props: {
         </div> : <></>}
       </div>
 
-      <Dialog visible={dialogVisible} onHide={() => setDialogVisible(false)} draggable={false} resizable={false}
+      <Dialog visible={dialogVisible} onHide={() => setDialogVisible(false)} draggable={false} resizable={false} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}
               onClick={preventDefaults} dismissableMask={true} onMaskClick={(e) => preventDefaults(e.nativeEvent)} header={header}
               footer={footer}>
         <InputTextarea value={languageString} style={settings.textEditor?.style} className={`lang-text-area ${languageSyntaxError ? "error" : ""}`}

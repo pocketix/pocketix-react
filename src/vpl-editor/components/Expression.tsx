@@ -56,7 +56,7 @@ const Expression = (props: {language: Language, expressionValue?: string, onExpr
 				}}
 				className="p-button-text"/>
 			</div>
-			<Dialog visible={visible} onHide={() => setVisible(false)} draggable={false} resizable={false}
+			<Dialog visible={visible} onHide={() => setVisible(false)} draggable={false} resizable={false} breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}
 				footer={footer} header={header} onClick={preventDefaults} dismissableMask={true} onMaskClick={(e) =>
 					preventDefaults(e.nativeEvent)
 				}>
