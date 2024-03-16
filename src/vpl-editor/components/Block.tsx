@@ -11,7 +11,7 @@ import { CompoundStatement } from "./CompoundStatement";
 import { Statement } from "./Statement";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AutoComplete } from "primereact/autocomplete";
 
 const Block = (props: {
@@ -29,6 +29,10 @@ const Block = (props: {
   const [block, setBlock] = useState(props.block);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null as unknown as StatementModel);
+
+  useEffect(() => {
+    setBlock(props.block);
+  }, [props.block]);
 
   const searchSuggestions = (query: string) => {
     const suggestions: StatementModel[] = [];

@@ -1,12 +1,18 @@
 import {Program} from "../model/language.model";
-import {useState} from "react";
+import { useEffect, useState } from "react";
 import {InputTextarea} from "primereact/inputtextarea";
 import "./TextEditor.css"
 
 const TextEditor = (props: { program: Program, onProgramChange: CallableFunction }) => {
-	const [editorContent, setEditorContent] = useState(JSON.stringify(props.program.block, null, 2));
+  const convertProgramToEditorContent = (program: Program) => JSON.stringify(program.block, null, 2);
+
+	const [editorContent, setEditorContent] = useState(convertProgramToEditorContent(props.program));
 	const [syntaxError, setSyntaxError] = useState(false);
 	const [timer, setTimer] = useState(undefined as NodeJS.Timeout | undefined);
+
+  useEffect(() => {
+    setEditorContent(convertProgramToEditorContent(props.program))
+  }, [props.program]);
 
 	const timerHandler = (blockAsString: string) => {
 		try {

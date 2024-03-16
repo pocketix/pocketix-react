@@ -21,8 +21,9 @@ const Program = (props: {
   settings?: EditorSettings,
   menu?: ReactNode
 }) => {
-  const [program, setProgram] = useState(generateIds(props.program));
-  const [visualProgram, setVisualProgram] = useState(program);
+  const programWithIds = generateIds(props.program);
+  const [program, setProgram] = useState(programWithIds);
+  const [visualProgram, setVisualProgram] = useState(programWithIds);
   const [textProgram, setTextProgram] = useState(props.program);
   const [settings, setSettings] = useState(props?.settings ?? defaultSettings);
   const [language, setLanguage] = useState(props.language);
@@ -114,10 +115,10 @@ const Program = (props: {
     }
   }
 
-  const setAllPrograms = (program: ProgramModel) => {
-    setProgram(program);
-    setVisualProgram(program);
-    setTextProgram(removeIds(program));
+  const setAllPrograms = (newProgram: ProgramModel) => {
+    setProgram(newProgram);
+    setVisualProgram(newProgram);
+    setTextProgram(removeIds(newProgram));
   }
 
   const header = <span>Language</span>;
@@ -201,11 +202,11 @@ const Program = (props: {
       <div className="program">
         {settings.visualEditor?.enabled ? <div className="visual-editor">
           <Block block={visualProgram.block} language={language} level={0}
-                 onUpdate={(block: BlockModel) => updateVisualProgram({...program, block})} key={JSON.stringify(program)}/>
+                 onUpdate={(block: BlockModel) => updateVisualProgram({...program, block})}/>
         </div> : <></>}
         {settings.textEditor?.enabled ? <div className="text-editor mobile-open">
           <TextEditor program={textProgram}
-                      onProgramChange={(newProgram: ProgramModel) => updateTextProgram({...newProgram})} key={JSON.stringify(program)}/>
+                      onProgramChange={(newProgram: ProgramModel) => updateTextProgram({...newProgram})}/>
         </div> : <></>}
       </div>
 

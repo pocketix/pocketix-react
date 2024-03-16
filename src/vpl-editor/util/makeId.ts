@@ -6,12 +6,13 @@ function generateIds(program: Program): Program {
   // Helper function to generate IDs recursively for a block
   function generateIdsRecursive(block: Block): Block {
     return block.map((statement: Statement) => {
+      const id = statement.id ?? generateRandomId();
       if ("block" in statement) {
         // If the statement is a CompoundStatement, generate IDs for its block recursively
-        return { ...(statement as Statement), block: generateIdsRecursive((statement as CompoundStatement).block), id: generateRandomId()  };
+        return { ...(statement as Statement), block: generateIdsRecursive((statement as CompoundStatement).block), id};
       }
 
-      return { ...statement, id: generateRandomId() };
+      return {...statement, id};
     });
   }
 
