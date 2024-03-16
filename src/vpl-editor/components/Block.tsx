@@ -143,7 +143,7 @@ const Block = (props: {
                             error={"Unknown statement!"} header={<></>} title={statement?.name}
                             key={statement.id} />;
         })}
-        <Button icon="pi pi-plus" onClick={() => setDialogVisible(true)} style={{
+        <Button  icon="pi pi-plus" onClick={() => setDialogVisible(true)} style={{
           backgroundColor: props.language.statements[parent.name].backgroundColor,
           borderColor: props.language.statements[parent.name].color,
           color: props.language.statements[parent.name].color
@@ -153,11 +153,11 @@ const Block = (props: {
         setDialogVisible(false);
       }} visible={dialogVisible} header={<span>Add statement</span>} footer={
         <>
-          <Button icon="pi pi-check" disabled={!selectedItem} onClick={() => {
+          <Button  icon="pi pi-check" disabled={!selectedItem} onClick={() => {
             setDialogVisible(false);
             add();
           }} label="Add" />
-          <Button icon="pi pi-times" onClick={() => setDialogVisible(false)} label="Cancel" />
+          <Button  icon="pi pi-times" onClick={() => setDialogVisible(false)} label="Cancel" />
         </>
       }>
         <AutoComplete dropdown={true} completeMethod={(event) => searchSuggestions(event.query)} field="label"

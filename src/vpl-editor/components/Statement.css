@@ -14,6 +14,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .accordion-header.error {
@@ -36,7 +37,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 5px;
+    margin-left: auto;
 }
 
 .accordion-open-icon {
@@ -49,7 +50,7 @@
 }
 
 .accordion-open-icon {
-    margin-left: 20px;
+    margin-left: 10px;
 }
 
 .accordion-open-icon.open {

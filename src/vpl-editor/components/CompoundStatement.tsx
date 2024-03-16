@@ -87,7 +87,8 @@ const CompoundStatement = (props: {
         statementFromLanguage.extensions?.enableCondition ?
           <div className="condition">
             <Expression language={props.language} expressionValue={props.statement.condition}
-                        onExpressionValueChanged={expressionValueChanged} />
+                        onExpressionValueChanged={expressionValueChanged} color={(statementFromLanguage.color ?? defaultStatementLanguage.color ?? "")}
+                        backgroundColor={backgroundColor} />
           </div> :
           <></>
       }

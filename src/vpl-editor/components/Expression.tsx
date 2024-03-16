@@ -11,6 +11,8 @@ import { preventDefaults } from "../util/preventDefaults";
 const Expression = (props: {
   language: Language,
   expressionValue?: string,
+  color: string,
+  backgroundColor: string,
   onExpressionValueChanged?: CallableFunction
 }) => {
   const variables = props.language.variables;
@@ -42,9 +44,9 @@ const Expression = (props: {
   };
 
   const footer = <>
-    <Button label="Cancel" icon="pi pi-times" disabled={syntaxError} onClick={() => setVisible(false)}
+    <Button  label="Cancel" icon="pi pi-times" disabled={syntaxError} onClick={() => setVisible(false)}
             className="p-button-text" />
-    <Button label="Ok" icon="pi pi-check" onClick={setExpressionAndClose} autoFocus />
+    <Button  label="Ok" icon="pi pi-check" onClick={setExpressionAndClose} autoFocus />
   </>;
 
   const header = <>
@@ -56,11 +58,14 @@ const Expression = (props: {
       <div className="p-inputgroup">
         <InputText className="input-field" value={expressionString} onChange={(e) => updateExpression(e.target.value)}
                    onClick={preventDefaults} />
-        <Button label="Add" icon="pi pi-ellipsis-h" disabled={syntaxError} onClick={(event) => {
+        <Button  icon="pi pi-ellipsis-h" disabled={syntaxError} onClick={(event) => {
           setVisible(true);
           preventDefaults(event);
-        }}
-                className="p-button-text" />
+        }} style={{
+          backgroundColor: props.backgroundColor,
+          borderColor: props.color,
+          color: props.color,
+        }}/>
       </div>
       <Dialog visible={visible} onHide={() => setVisible(false)} draggable={false} resizable={false}
               breakpoints={{ "960px": "75vw" }} style={{ width: "50vw" }}
@@ -71,8 +76,7 @@ const Expression = (props: {
           <Dropdown value={selectedVariable} onChange={(e) => setSelectedVariable(e.value)}
                     options={variables} optionLabel="label" className={"grow"}
                     placeholder="Use a variable" />
-          <Button label="Add" icon="pi pi-plus" disabled={syntaxError} onClick={addVariable}
-                  className="p-button-text" />
+          <Button  label="Add" icon="pi pi-plus" disabled={syntaxError} onClick={addVariable} outlined />
         </div>
         <InputTextarea value={expressionString} className={`text-area ${syntaxError ? "error" : ""}`} ref={textAreaRef}
                        onChange={(e) => {

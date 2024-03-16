@@ -103,7 +103,9 @@ const CmdStatement = (props: {
                 <div key={parameter} className="input-group">
                   <Expression
                     language={props.language} expressionValue={parameter}
-                    onExpressionValueChanged={(value: string) => editStatementParam(value, index)} />
+                    onExpressionValueChanged={(value: string) => editStatementParam(value, index)}
+                    color={(statementFromLanguage.color ?? defaultStatementLanguage.color ?? "")}
+                    backgroundColor={backgroundColor}/>
                   <Button
                     className="accordion-button" icon="pi pi-times" onClick={() => remove(index)}
                     style={{
@@ -117,7 +119,7 @@ const CmdStatement = (props: {
             }
 
             <div className="input-group">
-              <Button className="accordion-button" icon="pi pi-plus" onClick={add}
+              <Button  className="accordion-button" icon="pi pi-plus" onClick={add}
                       style={{
                         backgroundColor: (statementFromLanguage.backgroundColor ?? defaultStatementLanguage.backgroundColor),
                         borderColor: (statementFromLanguage.color ?? defaultStatementLanguage.color),

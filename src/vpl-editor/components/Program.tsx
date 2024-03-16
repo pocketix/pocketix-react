@@ -143,8 +143,8 @@ const Program = (props: {
   };
 
   const footer = <>
-    <Button icon="pi pi-check" label="Ok" disabled={languageSyntaxError} onClick={confirmLanguageDialog}/>
-    <Button icon="pi pi-times" label="Cancel" onClick={cancelUpdateDialog}/>
+    <Button  icon="pi pi-check" label="Ok" disabled={languageSyntaxError} onClick={confirmLanguageDialog}/>
+    <Button  icon="pi pi-times" label="Cancel" onClick={cancelUpdateDialog}/>
   </>
 
   const checkLanguage = () => {
@@ -174,31 +174,30 @@ const Program = (props: {
     <>
       <div className="menu">
         <div className="menu-left">
-          {settings.menu?.enableToggleVisual ? <ToggleButton className="toggle-desktop" onIcon="pi pi-palette" offIcon="pi pi-palette" offLabel="&nbsp;" onLabel="&nbsp;"
-                                                             checked={settings.visualEditor?.enabled} onClick={onEnableToggleVisual} /> : <></>}
-          {settings.menu?.enableToggleVisual ? <ToggleButton className="toggle-mobile" onIcon="pi pi-palette" offIcon="pi pi-palette" offLabel="&nbsp;" onLabel="&nbsp;"
-                                                             checked={!mobileClosedVisualEditor} onClick={() => setMobileClosedVisualEditor(!mobileClosedVisualEditor)} /> : <></>}
-          {settings.menu?.enableSaveVisual ? <Button icon="pi pi-save" disabled={!settings.common.manualSync} onClick={() => updateProgram({...visualProgram})}></Button> : <></>}
+          {settings.menu?.enableToggleVisual ? <Button className="toggle-desktop" icon="pi pi-palette" severity={settings.visualEditor?.enabled ? "info" : "secondary"}
+                                                             onClick={onEnableToggleVisual} /> : <></>}
+          {settings.menu?.enableToggleVisual ? <Button className="toggle-mobile" icon="pi pi-palette" severity={!mobileClosedVisualEditor ? "info" : "secondary"}
+                                                             onClick={() => setMobileClosedVisualEditor(!mobileClosedVisualEditor)} /> : <></>}
+          {settings.menu?.enableSaveVisual ? <Button  icon="pi pi-save" disabled={!settings.common.manualSync} onClick={() => updateProgram({...visualProgram})}></Button> : <></>}
         </div>
 
         <div className="menu-center">
-          {settings.menu?.enableUndo ? <Button icon="pi pi-undo" disabled={undoList.length < 1} onClick={undo}></Button> : <></>}
-          {settings.menu?.enableRedo ? <Button icon="pi pi-refresh" disabled={redoList.length < 1} onClick={redo}></Button> : <></>}
-          {settings.menu?.enableLang ? <Button icon="pi pi-cog" onClick={() => setDialogVisible(true)}></Button> : <></>}
-          {settings.menu?.enableSync ?
-            <ToggleButton onIcon="pi pi-sync" offIcon="pi pi-sync" checked={settings.common.manualSync}
-                          onClick={onToggleManualSync} onLabel="&nbsp;" offLabel="&nbsp;"/> : <></>}
+          {settings.menu?.enableUndo ? <Button  icon="pi pi-undo" disabled={undoList.length < 1} onClick={undo}></Button> : <></>}
+          {settings.menu?.enableRedo ? <Button  icon="pi pi-refresh" disabled={redoList.length < 1} onClick={redo}></Button> : <></>}
+          {settings.menu?.enableLang ? <Button  icon="pi pi-cog" onClick={() => setDialogVisible(true)}></Button> : <></>}
+          {settings.menu?.enableSync ? <Button  icon="pi pi-sync" severity={settings.common.manualSync ? "info" : "secondary"} onClick={onToggleManualSync}/> : <></>}
           {props?.menu ? props?.menu : ""}
         </div>
 
         <div className="menu-right">
-          {settings.menu?.enableSaveText ? <Button icon="pi pi-save" disabled={!settings.common.manualSync} onClick={() => updateProgram({...textProgram})}></Button> : <></>}
+          {settings.menu?.enableSaveText ? <Button  icon="pi pi-save" disabled={!settings.common.manualSync}
+                                                   onClick={() => updateProgram({...textProgram})}></Button> : <></>}
           {settings.menu?.enableToggleText ?
-            <ToggleButton checked={settings.textEditor?.enabled} onClick={onEnableToggleText} offLabel="&nbsp;" onLabel="&nbsp;"
-                          className="toggle-desktop" onIcon="pi pi-code" offIcon="pi pi-code" /> : <></>}
+            <Button severity={settings.textEditor?.enabled ? "info" : "secondary"} onClick={onEnableToggleText}
+                          className="toggle-desktop" icon="pi pi-code" /> : <></>}
           {settings.menu?.enableToggleText ?
-            <ToggleButton checked={mobileClosedVisualEditor} onClick={() => setMobileClosedVisualEditor(!mobileClosedVisualEditor)} offLabel="&nbsp;" onLabel="&nbsp;"
-                          className="toggle-mobile" onIcon="pi pi-code" offIcon="pi pi-code" /> : <></>}
+            <Button severity={mobileClosedVisualEditor ? "info" : "secondary"} onClick={() => setMobileClosedVisualEditor(!mobileClosedVisualEditor)}
+                          className="toggle-mobile" icon="pi pi-code" /> : <></>}
         </div>
       </div>
 

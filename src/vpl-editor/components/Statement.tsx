@@ -64,7 +64,8 @@ const Statement = (props: {
 						{props.title}
 					</span>
 					<div className="accordion-header-content">{props.header}</div>
-					<div className="accordion-header-right">
+        </div>
+					<div className="accordion-header-right p-buttonset">
 						<Button
 							className="accordion-button"
 							icon="pi pi-sort-up"
@@ -99,7 +100,6 @@ const Statement = (props: {
 							className={`accordion-open-icon ${isOpen ? "open" : "closed"}`}
 						></span>
 					</div>
-				</div>
 			</div>
 
 			<div
