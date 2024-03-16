@@ -3,6 +3,7 @@ import "./App.css";
 import {Language} from "../vpl-editor/model/meta-language.model";
 import {PrimeReactProvider} from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
+import {More} from "./More";
 import "primeicons/primeicons.css";
 import {Program} from "../vpl-editor/components/Program";
 
@@ -225,11 +226,17 @@ const programLanguage = {
 
 
 function App() {
-	return (
-		<PrimeReactProvider>
-			<Program language={programLanguage} program={program} level={0} onProgramChange={() => {}}/>
-		</PrimeReactProvider>
-	);
+  return (
+    <PrimeReactProvider>
+      <div className="heading-content">
+        <h1>
+          IoT-Automiser
+        </h1>
+        <More/>
+      </div>
+      <Program language={programLanguage} program={program} level={0} onProgramChange={() => {}} key={JSON.stringify(program)} />
+    </PrimeReactProvider>
+  );
 }
 
 export default App;
