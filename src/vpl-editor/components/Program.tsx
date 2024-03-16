@@ -36,6 +36,8 @@ const Program = (props: {
   const [undoList, setUndoList] = useState([] as string[]);
   const [redoList, setRedoList] = useState([] as string[]);
 
+  const [mobileClosedVisualEditor, setMobileClosedVisualEditor] = useState(false);
+
   const onEnableToggleVisual = () => {
     const visualEditorSettings = {
       ...settings.visualEditor,
@@ -174,8 +176,8 @@ const Program = (props: {
         <div className="menu-left">
           {settings.menu?.enableToggleVisual ? <ToggleButton className="toggle-desktop" onIcon="pi pi-palette" offIcon="pi pi-palette" offLabel="&nbsp;" onLabel="&nbsp;"
                                                              checked={settings.visualEditor?.enabled} onClick={onEnableToggleVisual} /> : <></>}
-          {settings.menu?.enableToggleVisual ?
-            <ToggleButton className="toggle-mobile" onIcon="pi pi-palette" offIcon="pi pi-palette" /> : <></>}
+          {settings.menu?.enableToggleVisual ? <ToggleButton className="toggle-mobile" onIcon="pi pi-palette" offIcon="pi pi-palette" offLabel="&nbsp;" onLabel="&nbsp;"
+                                                             checked={!mobileClosedVisualEditor} onClick={() => setMobileClosedVisualEditor(!mobileClosedVisualEditor)} /> : <></>}
           {settings.menu?.enableSaveVisual ? <Button icon="pi pi-save" disabled={!settings.common.manualSync} onClick={() => updateProgram({...visualProgram})}></Button> : <></>}
         </div>
 
@@ -195,16 +197,17 @@ const Program = (props: {
             <ToggleButton checked={settings.textEditor?.enabled} onClick={onEnableToggleText} offLabel="&nbsp;" onLabel="&nbsp;"
                           className="toggle-desktop" onIcon="pi pi-code" offIcon="pi pi-code" /> : <></>}
           {settings.menu?.enableToggleText ?
-            <ToggleButton className="toggle-mobile" onIcon="pi pi-code" offIcon="pi pi-code" /> : <></>}
+            <ToggleButton checked={mobileClosedVisualEditor} onClick={() => setMobileClosedVisualEditor(!mobileClosedVisualEditor)} offLabel="&nbsp;" onLabel="&nbsp;"
+                          className="toggle-mobile" onIcon="pi pi-code" offIcon="pi pi-code" /> : <></>}
         </div>
       </div>
 
       <div className="program">
-        {settings.visualEditor?.enabled ? <div className="visual-editor">
+        {settings.visualEditor?.enabled ? <div className={`visual-editor ${!mobileClosedVisualEditor ? "mobile-open" : ""}`}>
           <Block block={visualProgram.block} language={language} level={0}
                  onUpdate={(block: BlockModel) => updateVisualProgram({...program, block})}/>
         </div> : <></>}
-        {settings.textEditor?.enabled ? <div className="text-editor mobile-open">
+        {settings.textEditor?.enabled ? <div className={`text-editor ${mobileClosedVisualEditor ? "mobile-open" : ""}`}>
           <TextEditor program={textProgram}
                       onProgramChange={(newProgram: ProgramModel) => updateTextProgram({...newProgram})}/>
         </div> : <></>}
