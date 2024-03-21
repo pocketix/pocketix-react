@@ -34,12 +34,18 @@ const Expression = (props: {
   };
 
   const updateExpression = (value: string) => {
-    props.onExpressionValueChanged?.(value);
     setExpressionString(value);
   };
 
   const setExpressionAndClose = () => {
     updateExpression(expressionString);
+    props.onExpressionValueChanged?.(expressionString);
+    setVisible(false);
+  };
+
+  const onBlur = (value: string) => {
+    updateExpression(value);
+    props.onExpressionValueChanged?.(expressionString);
     setVisible(false);
   };
 
@@ -57,7 +63,7 @@ const Expression = (props: {
     <>
       <div className="p-inputgroup">
         <InputText className="input-field" value={expressionString} onChange={(e) => updateExpression(e.target.value)}
-                   onClick={preventDefaults} />
+                   onClick={preventDefaults} onBlur={(e) => onBlur(e.target.value)}/>
         <Button  icon="pi pi-ellipsis-h" disabled={syntaxError} onClick={(event) => {
           setVisible(true);
           preventDefaults(event);
