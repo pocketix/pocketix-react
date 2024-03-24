@@ -1,240 +1,68 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
-import {Language} from "../vpl-editor/model/meta-language.model";
-import {PrimeReactProvider} from "primereact/api";
+import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
-import {More} from "./More";
+import { More } from "./More";
 import "primeicons/primeicons.css";
-import {Program} from "../vpl-editor/components/Program";
+import { Program } from "../vpl-editor/components/Program";
+import { OpenAPI, ProgramService } from "../generated";
+import { defaultProgram } from "../util/defaultProgram";
+import { defaultMetaLanguage } from "../util/defaultMetaLanguage";
+import { Program as ProgramModel } from "../vpl-editor/model/language.model";
+import { Language, Statement, Variable } from "../vpl-editor/model/meta-language.model";
+import { Button } from "primereact/button";
 
-const program = {
-	"header": {},
-	"block": [
-		{
-			"name": "fork",
-			"block": [
-				{
-					"name": "if",
-					"block": [
-						{
-							"name": "if",
-							"block": [
-								{
-									"name": "PowerStrip.1",
-									"params": [
-										"false"
-									]
-								}
-							],
-							"condition": "Power Strip.socket_1=== 'true'"
-						}
-					],
-					"condition": "(hours(now) > 5 && hours(now) < 12 || hours(now) > 13 && hours(now) < 23) && Water Level.lvl_measurement_percent_full > 50"
-				},
-				{
-					"name": "else",
-					"block": [
-						{
-							"name": "if",
-							"block": [
-								{
-									"name": "PowerStrip.1",
-									"params": [
-										"true"
-									]
-								}
-							],
-							"condition": "Power Strip.socket_1 === 'false'"
-						},
-						{
-							"name": "if",
-							"block": [
-								{
-									"name": "PowerStrip.1",
-									"params": [
-										"false"
-									]
-								}
-							],
-							"condition": "Power Strip.socket_1 === 'true'"
-						}
-					],
-					"condition": ""
-				}
-			],
-			"condition": ""
-		}
-	]
+const getCurrentBaseUrl = () => {
+  const fullUrl = window.location.href as string;
+
+  // eslint-disable-next-line node/no-unsupported-features/node-builtins
+  const url = new URL(fullUrl);
+
+  return `${url.protocol}//${url.hostname}`;
 };
 
-const programLanguage = {
-	"variables": [
-		{
-			"id": "1.socket_1",
-			"label": "Power Strip.socket_1"
-		},
-		{
-			"id": "1.socket_2",
-			"label": "Power Strip.socket_2"
-		},
-		{
-			"id": "1.socket_3",
-			"label": "Power Strip.socket_3"
-		},
-		{
-			"id": "1.socket_4",
-			"label": "Power Strip.socket_4"
-		},
-		{
-			"id": "1.usb_1",
-			"label": "Power Strip.usb_1"
-		},
-		{
-			"id": "17.battery_percentage",
-			"label": "Water Level.battery_percentage"
-		},
-		{
-			"id": "17.batteryVoltage",
-			"label": "Water Level.batteryVoltage"
-		},
-		{
-			"id": "17.distance",
-			"label": "Water Level.distance"
-		},
-		{
-			"id": "17.gps_source",
-			"label": "Water Level.gps_source"
-		},
-		{
-			"id": "17.lvl_depth_empty",
-			"label": "Water Level.lvl_depth_empty"
-		},
-		{
-			"id": "17.lvl_measurement_percent_full",
-			"label": "Water Level.lvl_measurement_percent_full"
-		},
-		{
-			"id": "17.lvl_spec_measurement_range",
-			"label": "Water Level.lvl_spec_measurement_range"
-		},
-		{
-			"id": "17.signal",
-			"label": "Water Level.signal"
-		},
-		{
-			"id": "17.water_level_hist1",
-			"label": "Water Level.water_level_hist1"
-		},
-		{
-			"id": "17.water_level_hist2",
-			"label": "Water Level.water_level_hist2"
-		},
-		{
-			"id": "17.water_level_hist3\t",
-			"label": "Water Level.water_level_hist3\t"
-		}
-	],
-	"statements": {
-		"_": {
-      "name": "_",
-			"component": "compound",
-			"label": "_",
-			"icon": "pi-code",
-			"color": "black",
-			"levels": [
-				-1
-			],
-			"backgroundColor": "#FFFFFF"
-		},
-		"fork": {
-      "name": "fork",
-			"component": "compound",
-			"label": "fork",
-			"icon": "pi-sitemap",
-			"color": "white",
-			"backgroundColor": "#9F8C3E",
-			"avoidParents": [
-				"fork",
-				"switch"
-			],
-			"extensions": {
-				"enableCondition": false
-			}
-		},
-		"if": {
-      "name": "if",
-			"component": "compound",
-			"label": "if",
-			"icon": "pi-question-circle",
-			"color": "white",
-			"backgroundColor": "#BFB27C",
-			"avoidParents": [
-				"switch"
-			],
-			"extensions": {
-				"enableCondition": true
-			}
-		},
-		"else": {
-      "name": "else",
-			"component": "compound",
-			"label": "else",
-			"icon": "pi-question-circle",
-			"color": "white",
-			"backgroundColor": "#BFB27C",
-			"parents": [
-				"fork"
-			],
-			"avoidParents": [
-				"switch"
-			],
-			"positions": [
-				"last"
-			],
-			"avoidPositions": [
-				"first"
-			],
-			"extensions": {
-				"enableCondition": false
-			}
-		},
-		"PowerStrip.1": {
-      "name": "PowerStrip.1",
-			"component": "cmd",
-			"icon": "pi-bolt",
-			"color": "white",
-			"backgroundColor": "#99A8D7",
-			"avoidParents": [
-				"fork",
-				"switch"
-			],
-			"extensions": {
-				"params": {
-					"type": "array"
-				}
-			},
-			"label": "PowerStrip.toggle",
-			"originalId": "1.1"
-		}
-	},
-	"err": {
-		"icon": "pi-exclamation-triangle",
-		"color": "red",
-		"backgroundColor": "#F9F63D"
-	}
-} as unknown as Language;
-
+OpenAPI.BASE = `${getCurrentBaseUrl()}:5000`;
 
 function App() {
+  const [program, setProgram] = useState(defaultProgram);
+  const [metaLanguage, setMetaLanguage] = useState(defaultMetaLanguage);
+  const [capabilities, setCapabilities] = useState([] as (Statement & {
+    capabilityId: string
+  })[]);
+  const [variables, setVariables] = useState([] as Variable[]);
+
+  const replaceProgramWithSerializedCapabilitiesAndParameters = (program: ProgramModel) => {
+    let programAsString = JSON.stringify(program);
+
+    capabilities.forEach(item => programAsString = programAsString.replaceAll(item.name, item.capabilityId));
+    variables.forEach(item => programAsString = programAsString.replaceAll(item.label, item.id));
+
+    return JSON.parse(programAsString);
+  };
+
+  const onProgramTrigger = (program: ProgramModel) => {
+    const evaluableProgram = replaceProgramWithSerializedCapabilitiesAndParameters(program);
+
+    ProgramService.v1RunProgram(evaluableProgram)
+      .then((value) => console.log(value))
+      .catch((error) => console.log(error));
+  }
+
   return (
     <PrimeReactProvider>
       <div className="heading-content">
         <h1>
           IoT-Automiser
         </h1>
-        <More/>
+        <More onProgramChange={setProgram} onMetaLanguageChange={setMetaLanguage} onCapabilitiesChange={setCapabilities}
+              onVariablesChange={setVariables} />
       </div>
-      <Program language={programLanguage} program={program} level={0} onProgramChange={() => {}} key={JSON.stringify(program)} />
+      <Program language={metaLanguage}
+               program={program}
+               level={0}
+               onProgramChange={setProgram}
+               key={JSON.stringify(program)}
+               menu={<><Button icon="pi pi-bolt" onClick={() => onProgramTrigger(program)} /></>} />
     </PrimeReactProvider>
   );
 }

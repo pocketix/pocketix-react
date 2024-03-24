@@ -1,12 +1,23 @@
 import "./More.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { preventDefaults } from "../vpl-editor/util/preventDefaults";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { Dropdown } from "primereact/dropdown";
+import { createVariablesFromDevice } from "../util/createVariablesFromDevice";
+import {
+  createCapabilitiesFromDeviceAndCapabilityTemplate
+} from "../util/createCapabilitiesFromDeviceAndCapabilityTemplate";
+import { Group, GroupService, Program, ProgramService, Version } from "../generated";
+import { Language, Statement, Variable } from "../vpl-editor/model/meta-language.model";
 
-const More = () => {
+const More = (props: {
+  onProgramChange: CallableFunction,
+  onMetaLanguageChange: CallableFunction,
+  onCapabilitiesChange: CallableFunction,
+  onVariablesChange: CallableFunction
+}) => {
   const [visible, setVisible] = useState(false);
 
   const showDialog = (e: React.MouseEvent) => {
@@ -18,14 +29,145 @@ const More = () => {
     preventDefaults(e);
     setVisible(false);
   };
-  const [selectedCity, setSelectedCity] = useState(null);
-  const cities = [
-    { name: "New York", code: "NY" },
-    { name: "Rome", code: "RM" },
-    { name: "London", code: "LDN" },
-    { name: "Istanbul", code: "IST" },
-    { name: "Paris", code: "PRS" }
-  ];
+
+  const [selectedGroup, setSelectedGroup] = useState(undefined as undefined | Group);
+  const [groups, setGroups] = useState([] as Group[]);
+  const [groupsError, setGroupsError] = useState("");
+
+  const [groupById, setGroupById] = useState(null as null | Group);
+  const [groupsByIdError, setGroupsByIdError] = useState("");
+
+  const [programs, setPrograms] = useState([] as Program[]);
+  const [capabilities, setCapabilities] = useState([] as (Statement & {
+    capabilityId: string
+  })[]);
+  const [variables, setVariables] = useState([] as Variable[]);
+
+  const [activeProgramIndex, setActiveProgramIndex] = useState(undefined as number | undefined);
+
+  const [metaLanguage, setMetaLanguage] = useState(undefined as Language | undefined);
+  const [currentMetaLanguage, setCurrentMetaLanguage] = useState(undefined as Version | undefined);
+
+  const replaceProgramWithReadableCapabilitiesAndParameters = (program: Program) => {
+    let programAsString = JSON.stringify(program);
+
+    capabilities.forEach(item => programAsString = programAsString.replaceAll(item.capabilityId, item.name));
+    variables.forEach(item => programAsString = programAsString.replaceAll(item.id, item.label));
+
+    return JSON.parse(programAsString);
+  };
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const groupsFromApi = await GroupService.getAllGroups(false);
+        setGroups(groupsFromApi);
+      } catch (error) {
+        setGroupsError((error as Error).message);
+      }
+    };
+
+    fetchGroups();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedGroup) {
+      return;
+    }
+
+    const fetchGroup = async () => {
+      try {
+        const groupFromApi = await GroupService.getGroup((selectedGroup as Group).id, false) as Group;
+        setGroupById(groupFromApi);
+
+        const newVariables = groupFromApi.devices.flatMap(createVariablesFromDevice);
+        const newCapabilities = groupFromApi.devices.flatMap(createCapabilitiesFromDeviceAndCapabilityTemplate);
+
+        setVariables(newVariables);
+        setCapabilities(newCapabilities);
+
+        props.onVariablesChange(newVariables);
+        props.onCapabilitiesChange(newCapabilities);
+
+        setActiveProgram(0);
+      } catch (error) {
+        setGroupsByIdError((error as Error).message);
+      }
+    };
+
+    fetchGroup();
+  }, [selectedGroup]);
+
+  useEffect(() => {
+    if (!selectedGroup) {
+      return;
+    }
+
+    const fetchPrograms = async () => {
+      try {
+        let programsFromApi = await ProgramService.getProgramOfGroup((selectedGroup as Group).id) as Program[];
+
+        programsFromApi = programsFromApi.map(replaceProgramWithReadableCapabilitiesAndParameters);
+
+        setActiveProgramIndex(0);
+        setPrograms(programsFromApi);
+      } catch (error) {
+        setGroupsByIdError((error as Error).message);
+      }
+    };
+
+    fetchPrograms();
+  }, [groupById]);
+
+  useEffect(() => {
+    if (activeProgramIndex === undefined) {
+      return;
+    }
+
+    const newVersion = programs[activeProgramIndex]?.version;
+    if (newVersion === currentMetaLanguage) {
+      return;
+    }
+
+    const fetchPrograms = async () => {
+      try {
+        const metaLanguage = await ProgramService.getMetaLanguage(newVersion);
+        setMetaLanguage(metaLanguage);
+      } catch (error) {
+        setGroupsByIdError((error as Error).message);
+      }
+    };
+
+    fetchPrograms();
+  }, [activeProgramIndex]);
+
+  const setActiveProgram = (index: number) => {
+    const newVersion = programs[index].version;
+    setActiveProgramIndex(index);
+
+    if (newVersion === currentMetaLanguage) {
+      return;
+    }
+
+    setCurrentMetaLanguage(newVersion);
+
+    ProgramService.getMetaLanguage(newVersion).then((metaLanguage) => setMetaLanguage(metaLanguage as Language));
+  };
+
+  const updateProgramAndMetaLanguage = () => {
+    if (activeProgramIndex === undefined || metaLanguage === undefined) {
+      return;
+    }
+
+    const newMetaLanguage = { ...metaLanguage };
+
+    newMetaLanguage.variables = variables;
+    capabilities.forEach(capability => newMetaLanguage.statements[capability.name] = capability);
+
+    props.onMetaLanguageChange(newMetaLanguage);
+    props.onProgramChange(programs[activeProgramIndex].data);
+  };
+
   return (
     <>
       <Button icon="pi pi-angle-double-left" onClick={showDialog} />
@@ -39,11 +181,96 @@ const More = () => {
         className="fullscreen-modal"
       >
         <div className="heading-content">
-          <h1>More</h1>
+          <h1>About IoT-Automiser</h1>
           <Button icon="pi pi-angle-double-right" onClick={hideDialog} />
         </div>
 
         <Accordion activeIndex={0}>
+          <AccordionTab header="Settings">
+            <div className="p-inputgroup flex-1">
+                <span className="p-inputgroup-addon">
+                    <i className="pi pi-clone"></i>
+                </span>
+              <Dropdown value={selectedGroup} onChange={(e) => setSelectedGroup(e.value)} options={groups}
+                        optionLabel="name"
+                        placeholder="Select a Group" className="w-full md:w-14rem" />
+            </div>
+            <p className="m-0">
+              Available devices:
+            </p>
+            <div>
+              <ul className="m-0">
+                {groupById?.devices?.map(item => <li key={item.deviceUid} className="device-parameters">
+                  <span><i className={item.image}></i> {item.type.name} - {item.deviceName}</span>
+
+                  <div>
+                    <span>
+                      Parameters
+                    </span>
+                    <ul>
+                      {item.parameterValues?.map(parameterValue =>
+                        <li
+                          key={parameterValue.id}>{`${parameterValue.type.name}: ${parameterValue.type.type} [${parameterValue.type.units}]`}</li>)}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <span>
+                    Capabilities
+                    </span>
+                    <ul>
+                      {item.capabilities?.length === 0 ? <li>No Capabilities</li> : <></>}
+                      {item.capabilities?.map(capability => <li key={capability.id}>{capability.name}
+                        ({capability.parameters.map(capabilityParameter =>
+                          <span
+                            key={`${capability.id}.${capabilityParameter.type}`}><i>{capabilityParameter.type}</i>: <i>{capabilityParameter.value}</i>
+                          </span>)})</li>)}
+                    </ul>
+                  </div>
+
+                </li>)}
+              </ul>
+
+              <div>
+                <span>
+                  Selecting this group will expand the meta language by the following variables:
+                </span>
+                <pre>
+                  {JSON.stringify(variables, null, 2)}
+                </pre>
+
+                <span>
+                  Selecting this group will expand the meta language by the following capabilities:
+                </span>
+                <pre>
+                  {JSON.stringify(capabilities, null, 2)}
+                </pre>
+
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span>
+                  Available programs:
+                  </span>
+                  <span className="p-buttonset">
+                    {programs.length ? <Button label="Use Selected Program" size="small" icon="pi pi-save"
+                                               onClick={updateProgramAndMetaLanguage} /> : <></>}
+                    {programs.map((item, index) => <Button key={item.id} label={item.name} size="small"
+                                                           onClick={() => setActiveProgram(index)}
+                                                           disabled={activeProgramIndex === index} />)}
+                  </span>
+                  <pre style={{ textWrap: "pretty" }}>
+                    {programs[activeProgramIndex || 0] ? JSON.stringify(programs[activeProgramIndex || 0].data, null, 2) : "No programs"}
+                  </pre>
+                  <span>
+                    Meta-Language Version: {currentMetaLanguage}
+                  </span>
+                  <pre>
+                    {JSON.stringify(metaLanguage, null, 2)}
+                  </pre>
+                </div>
+
+              </div>
+            </div>
+          </AccordionTab>
           <AccordionTab header="Buttons overview">
             <p className="m-0">
               <i className="pi pi-palette"></i> - Switch visual editor on or off. On mobile exclusive with code editor.
@@ -105,34 +332,20 @@ const More = () => {
               <i className="pi pi-upload"></i> - Persist changes (unavailable in the demo).
             </p>
           </AccordionTab>
-          <AccordionTab header="Settings">
-            <div className="p-inputgroup flex-1">
-                <span className="p-inputgroup-addon">
-                    <i className="pi pi-clone"></i>
-                </span>
-              <Dropdown value={selectedCity} onChange={(e) => setSelectedCity(e.value)} options={cities}
-                        optionLabel="name"
-                        placeholder="Select a City" className="w-full md:w-14rem" />
-            </div>
-            <p className="m-0">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua.
-              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-              commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur.
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-              laborum.
-            </p>
-          </AccordionTab>
           <AccordionTab header="About">
             <p className="m-0">
-              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam
-              rem aperiam, eaque ipsa
-              quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam
-              voluptatem quia voluptas
-              sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi
-              nesciunt.
-              Consectetur, adipisci velit, sed quia non numquam eius modi.
+              IoT-Automiser is a block and form based visual programming language and editor currently being developed
+              by <a href="https://www.fit.vut.cz/person/hynek/.en">Jiří Hynek</a> (<a
+              href="mailto:hynek@fit.vut.cz">hynek@fit.vut.cz</a>) and <a
+              href="https://www.fit.vut.cz/person/ijohn/.en">Petr John</a> (<a
+              href="mailto:ijohn@fit.vut.cz">ijohn@fit.vut.cz</a>) at <a href="https://www.fit.vut.cz/.en">BUT
+              FIT</a> primarily aimed at the automation of smart devices on mobile phones. The first prototype of the
+              tool was developed in cooperation between BUT FIT and the company <a
+              href="https://www.logimic.com/cs/">Logimic</a> in the project <a
+              href="https://www.fit.vut.cz/research/project/1692/.en">Services for Water Management and Monitoring
+              Systems in Retention Basins</a>. While the first prototype remained internal to Logimc. The current
+              version of the prototype is free of any ties to the Logimic company and is available under the MIT
+              licence.
             </p>
           </AccordionTab>
         </Accordion>
