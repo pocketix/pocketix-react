@@ -47,7 +47,7 @@ const More = (props: {
   const [activeProgramIndex, setActiveProgramIndex] = useState(undefined as number | undefined);
 
   const [metaLanguage, setMetaLanguage] = useState(undefined as Language | undefined);
-  const [currentMetaLanguage, setCurrentMetaLanguage] = useState(undefined as Version | undefined);
+  const [currentMetaLanguageVersion, setCurrentMetaLanguageVersion] = useState(undefined as Version | undefined);
 
   const replaceProgramWithReadableCapabilitiesAndParameters = (program: Program) =>
     serializedToReadableCapabilityAndVariablesReplacer(program.data, capabilities, variables);
@@ -102,7 +102,7 @@ const More = (props: {
       try {
         let programsFromApi = await ProgramService.getProgramOfGroup((selectedGroup as Group).id) as Program[];
 
-        programsFromApi = programsFromApi.map(replaceProgramWithReadableCapabilitiesAndParameters);
+        programsFromApi = programsFromApi.map(item => ({...item, data: replaceProgramWithReadableCapabilitiesAndParameters(item)}));
 
         setActiveProgramIndex(0);
         setPrograms(programsFromApi);
@@ -120,11 +120,12 @@ const More = (props: {
     }
 
     const newVersion = programs[activeProgramIndex]?.version;
-    if (newVersion === currentMetaLanguage) {
+
+    if (newVersion === currentMetaLanguageVersion) {
       return;
     }
 
-    const fetchPrograms = async () => {
+    const fetchMetaLanguage = async () => {
       try {
         const metaLanguage = await ProgramService.getMetaLanguage(newVersion);
         setMetaLanguage(metaLanguage);
@@ -133,18 +134,18 @@ const More = (props: {
       }
     };
 
-    fetchPrograms();
+    fetchMetaLanguage();
   }, [activeProgramIndex]);
 
   const setActiveProgram = (index: number) => {
     const newVersion = programs[index].version;
     setActiveProgramIndex(index);
 
-    if (newVersion === currentMetaLanguage) {
+    if (newVersion === currentMetaLanguageVersion) {
       return;
     }
 
-    setCurrentMetaLanguage(newVersion);
+    setCurrentMetaLanguageVersion(newVersion);
 
     ProgramService.getMetaLanguage(newVersion).then((metaLanguage) => setMetaLanguage(metaLanguage as Language));
   };
@@ -256,7 +257,7 @@ const More = (props: {
                     {programs[activeProgramIndex || 0] ? JSON.stringify(programs[activeProgramIndex || 0].data, null, 2) : "No programs"}
                   </pre>
                   <span>
-                    Meta-Language Version: {currentMetaLanguage}
+                    Meta-Language Version: {currentMetaLanguageVersion}
                   </span>
                   <pre>
                     {JSON.stringify(metaLanguage, null, 2)}
