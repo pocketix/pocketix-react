@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useRef, useState} from "react";
 import "./App.css";
 import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
@@ -11,6 +11,11 @@ import { defaultMetaLanguage } from "../util/defaultMetaLanguage";
 import { Program as ProgramModel } from "../vpl-editor/model/language.model";
 import { Language, Statement, Variable } from "../vpl-editor/model/meta-language.model";
 import { Button } from "primereact/button";
+import {
+  readableToSerializedCapabilityAndVariablesReplacer,
+  serializedToReadableCapabilityAndVariablesReplacer
+} from "../util/capabilityAndVariablesReplacers";
+import {Toast} from "primereact/toast";
 
 const getCurrentBaseUrl = () => {
   const fullUrl = window.location.href as string;
@@ -30,26 +35,24 @@ function App() {
     capabilityId: string
   })[]);
   const [variables, setVariables] = useState([] as Variable[]);
+  const toast = useRef<Toast>(null);
 
-  const replaceProgramWithSerializedCapabilitiesAndParameters = (program: ProgramModel) => {
-    let programAsString = JSON.stringify(program);
 
-    capabilities.forEach(item => programAsString = programAsString.replaceAll(item.name, item.capabilityId));
-    variables.forEach(item => programAsString = programAsString.replaceAll(item.label, item.id));
-
-    return JSON.parse(programAsString);
-  };
+  const replaceProgramWithSerializedCapabilitiesAndParameters = (program: ProgramModel) =>
+      readableToSerializedCapabilityAndVariablesReplacer(program, capabilities, variables);
 
   const onProgramTrigger = (program: ProgramModel) => {
     const evaluableProgram = replaceProgramWithSerializedCapabilitiesAndParameters(program);
 
     ProgramService.v1RunProgram(evaluableProgram)
-      .then((value) => console.log(value))
+      .then((value) =>
+          console.log(serializedToReadableCapabilityAndVariablesReplacer(value, capabilities, variables)))
       .catch((error) => console.log(error));
   }
 
   return (
     <PrimeReactProvider>
+      <Toast ref={toast} />
       <div className="heading-content">
         <h1>
           IoT-Automiser

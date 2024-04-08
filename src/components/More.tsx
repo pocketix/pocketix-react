@@ -11,6 +11,7 @@ import {
 } from "../util/createCapabilitiesFromDeviceAndCapabilityTemplate";
 import { Group, GroupService, Program, ProgramService, Version } from "../generated";
 import { Language, Statement, Variable } from "../vpl-editor/model/meta-language.model";
+import {serializedToReadableCapabilityAndVariablesReplacer} from "../util/capabilityAndVariablesReplacers";
 
 const More = (props: {
   onProgramChange: CallableFunction,
@@ -48,14 +49,8 @@ const More = (props: {
   const [metaLanguage, setMetaLanguage] = useState(undefined as Language | undefined);
   const [currentMetaLanguage, setCurrentMetaLanguage] = useState(undefined as Version | undefined);
 
-  const replaceProgramWithReadableCapabilitiesAndParameters = (program: Program) => {
-    let programAsString = JSON.stringify(program);
-
-    capabilities.forEach(item => programAsString = programAsString.replaceAll(item.capabilityId, item.name));
-    variables.forEach(item => programAsString = programAsString.replaceAll(item.id, item.label));
-
-    return JSON.parse(programAsString);
-  };
+  const replaceProgramWithReadableCapabilitiesAndParameters = (program: Program) =>
+    serializedToReadableCapabilityAndVariablesReplacer(program.data, capabilities, variables);
 
   useEffect(() => {
     const fetchGroups = async () => {

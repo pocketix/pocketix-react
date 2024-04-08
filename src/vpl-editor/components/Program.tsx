@@ -121,6 +121,7 @@ const Program = (props: {
     setProgram(newProgram);
     setVisualProgram(newProgram);
     setTextProgram(removeIds(newProgram));
+    props.onProgramChange(newProgram);
   }
 
   const header = <span>Language</span>;
