@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, { useRef, useState } from "react";
 import "./App.css";
 import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
@@ -15,7 +15,7 @@ import {
   readableToSerializedCapabilityAndVariablesReplacer,
   serializedToReadableCapabilityAndVariablesReplacer
 } from "../util/capabilityAndVariablesReplacers";
-import {Toast} from "primereact/toast";
+import { Toast } from "primereact/toast";
 
 const getCurrentBaseUrl = () => {
   const fullUrl = window.location.href as string;
@@ -37,22 +37,35 @@ function App() {
   const [variables, setVariables] = useState([] as Variable[]);
   const toast = useRef<Toast>(null);
 
-
   const replaceProgramWithSerializedCapabilitiesAndParameters = (program: ProgramModel) =>
-      readableToSerializedCapabilityAndVariablesReplacer(program, capabilities, variables);
+    readableToSerializedCapabilityAndVariablesReplacer(program, capabilities, variables);
 
   const onProgramTrigger = (program: ProgramModel) => {
     const evaluableProgram = replaceProgramWithSerializedCapabilitiesAndParameters(program);
 
     ProgramService.v1RunProgram(evaluableProgram)
-      .then((value) =>
-          console.log(serializedToReadableCapabilityAndVariablesReplacer(value, capabilities, variables)))
+      .then((value) => {
+        const commands = serializedToReadableCapabilityAndVariablesReplacer(value, capabilities, variables);
+
+        if (!toast || !toast.current) {
+          return;
+        }
+
+        toast.current.show(commands.map(
+          (command: never) => ({
+            severity: "info",
+            summary: "Triggered capabilities",
+            // @ts-ignore
+            detail: `Triggered capability ${command.name} with parameters ${JSON.stringify(command.params)}`
+          })
+        ));
+      })
       .catch((error) => console.log(error));
-  }
+  };
 
   return (
     <PrimeReactProvider>
-      <Toast ref={toast} />
+      <Toast ref={toast} position="bottom-center"/>
       <div className="heading-content">
         <h1>
           IoT-Automiser
