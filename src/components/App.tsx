@@ -35,6 +35,7 @@ function App() {
     capabilityId: string
   })[]);
   const [variables, setVariables] = useState([] as Variable[]);
+  const [evaluateButtonEnabled, setEvaluateButtonEnabled] = useState(false);
   const toast = useRef<Toast>(null);
 
   const replaceProgramWithSerializedCapabilitiesAndParameters = (program: ProgramModel) =>
@@ -76,9 +77,12 @@ function App() {
       <Program language={metaLanguage}
                program={program}
                level={0}
-               onProgramChange={setProgram}
+               onProgramChange={(changedProgram: ProgramModel) => {
+                 setProgram(changedProgram);
+                 setEvaluateButtonEnabled(true);
+               }}
                key={JSON.stringify(program)}
-               menu={<><Button icon="pi pi-bolt" onClick={() => onProgramTrigger(program)} /></>} />
+               menu={<><Button icon="pi pi-bolt" onClick={() => onProgramTrigger(program)} disabled={!evaluateButtonEnabled}/></>} />
     </PrimeReactProvider>
   );
 }
