@@ -9,7 +9,7 @@ import { OpenAPI, ProgramService } from "../generated";
 import { defaultProgram } from "../util/defaultProgram";
 import { defaultMetaLanguage } from "../util/defaultMetaLanguage";
 import { Program as ProgramModel } from "../vpl-editor/model/language.model";
-import { Language, Statement, Variable } from "../vpl-editor/model/meta-language.model";
+import { Statement, Variable } from "../vpl-editor/model/meta-language.model";
 import { Button } from "primereact/button";
 import {
   readableToSerializedCapabilityAndVariablesReplacer,
@@ -53,10 +53,9 @@ function App() {
         }
 
         toast.current.show(commands.map(
-          (command: never) => ({
+          (command: { name: string, params: string }) => ({
             severity: "info",
             summary: "Triggered capabilities",
-            // @ts-ignore
             detail: `Triggered capability ${command.name} with parameters ${JSON.stringify(command.params)}`
           })
         ));
