@@ -68,7 +68,7 @@ function App() {
       <Toast ref={toast} position="bottom-center"/>
       <div className="heading-content">
         <h1>
-          IoT-Automiser
+          Pocketix
         </h1>
         <More onProgramChange={setProgram} onMetaLanguageChange={setMetaLanguage} onCapabilitiesChange={setCapabilities}
               onVariablesChange={setVariables} />

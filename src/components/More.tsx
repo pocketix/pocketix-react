@@ -177,7 +177,7 @@ const More = (props: {
         className="fullscreen-modal"
       >
         <div className="heading-content">
-          <h1>About IoT-Automiser</h1>
+          <h1>About Pocketix</h1>
           <Button icon="pi pi-angle-double-right" onClick={hideDialog} />
         </div>
 
@@ -330,7 +330,7 @@ const More = (props: {
           </AccordionTab>
           <AccordionTab header="About">
             <p className="m-0">
-              IoT-Automiser is a block and form based visual programming language and editor currently being developed
+              Pocketix is a block and form based visual programming language and editor currently being developed
               by <a href="https://www.fit.vut.cz/person/hynek/.en">Jiří Hynek</a> (<a
               href="mailto:hynek@fit.vut.cz">hynek@fit.vut.cz</a>) and <a
               href="https://www.fit.vut.cz/person/ijohn/.en">Petr John</a> (<a
