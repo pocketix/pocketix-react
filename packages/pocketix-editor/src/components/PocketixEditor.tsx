@@ -1,4 +1,3 @@
-import { ToggleButton } from "primereact/togglebutton";
 import { Button } from "primereact/button";
 import { Block } from "./Block";
 import { Program as ProgramModel, Block as BlockModel } from "../model/language.model";
@@ -12,8 +11,9 @@ import { generateIds, removeIds } from "../util/makeId";
 import { preventDefaults } from "../util/preventDefaults";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Dialog } from "primereact/dialog";
+import { PrimeReactProvider } from "primereact/api";
 
-const Program = (props: {
+const PocketixEditor = (props: {
   program: ProgramModel,
   language: Language,
   level: number,
@@ -172,7 +172,7 @@ const Program = (props: {
   };
 
   return (
-    <>
+    <PrimeReactProvider>
       <div className="menu">
         <div className="menu-left">
           {settings.menu?.enableToggleVisual ? <Button className="toggle-desktop" icon="pi pi-palette" severity={settings.visualEditor?.enabled ? "info" : "secondary"}
@@ -219,8 +219,8 @@ const Program = (props: {
         <InputTextarea value={languageString} style={settings.textEditor?.style} className={`lang-text-area ${languageSyntaxError ? "error" : ""}`}
                        onChange={(e) => updateLanguageAndTriggerCheck(e.target.value)} rows={5} cols={30}/>
       </Dialog>
-    </>
+    </PrimeReactProvider>
   );
 };
 
-export { Program };
+export { PocketixEditor };

@@ -1,6 +1,6 @@
 import { Device } from "../generated";
-import { Statement } from "../vpl-editor/model/meta-language.model";
-import { capabilityTemplate } from "../vpl-editor/util/capabilityTemplate";
+import { Statement } from "pocketix-react/dist/types/model/meta-language.model";
+import {capabilityTemplate} from "pocketix-react";
 
 const createCapabilitiesFromDeviceAndCapabilityTemplate = (device: Device): (Statement & {capabilityId: string})[] => {
   const deviceName = device.deviceName.replace(/[\s-+*/.]/g, "");

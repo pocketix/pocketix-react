@@ -1,5 +1,5 @@
-import {Statement, Variable} from "../vpl-editor/model/meta-language.model";
-import {Program} from "../vpl-editor/model/language.model";
+import {Statement, Variable} from "pocketix-react/dist/types/model/meta-language.model";
+import {Program} from "pocketix-react/dist/types/model/language.model";
 
 const serializedToReadableCapabilityAndVariablesReplacer = (program: Program,
                                                             capabilities: ((Statement & { capabilityId: string })[]),

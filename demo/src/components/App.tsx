@@ -4,18 +4,18 @@ import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { More } from "./More";
 import "primeicons/primeicons.css";
-import { Program } from "../vpl-editor/components/Program";
 import { OpenAPI, ProgramService } from "../generated";
 import { defaultProgram } from "../util/defaultProgram";
 import { defaultMetaLanguage } from "../util/defaultMetaLanguage";
-import { Program as ProgramModel } from "../vpl-editor/model/language.model";
-import { Statement, Variable } from "../vpl-editor/model/meta-language.model";
+import { Program as ProgramModel } from "pocketix-react/dist/types/model/language.model";
+import { Statement, Variable } from "pocketix-react/dist/types/model/meta-language.model";
 import { Button } from "primereact/button";
 import {
   readableToSerializedCapabilityAndVariablesReplacer,
   serializedToReadableCapabilityAndVariablesReplacer
 } from "../util/capabilityAndVariablesReplacers";
 import { Toast } from "primereact/toast";
+import {PocketixEditor} from "pocketix-react";
 
 const getCurrentBaseUrl = () => {
   const fullUrl = window.location.href as string;
@@ -23,10 +23,14 @@ const getCurrentBaseUrl = () => {
   // eslint-disable-next-line node/no-unsupported-features/node-builtins
   const url = new URL(fullUrl);
 
-  return `${url.protocol}//${url.hostname}`;
+  if (process.env.REACT_BACKEND_URL) {
+      return process.env.REACT_BACKEND_URL;
+  }
+
+  return (url.port !== "80" && url.port !== "443") ? `${url.protocol}//${url.hostname}:3000` : `${url.protocol}//${url.hostname}:3000`;
 };
 
-OpenAPI.BASE = `${getCurrentBaseUrl()}:5000`;
+OpenAPI.BASE = `${getCurrentBaseUrl()}/api`;
 
 function App() {
   const [program, setProgram] = useState(defaultProgram);
@@ -73,15 +77,15 @@ function App() {
         <More onProgramChange={setProgram} onMetaLanguageChange={setMetaLanguage} onCapabilitiesChange={setCapabilities}
               onVariablesChange={setVariables} />
       </div>
-      <Program language={metaLanguage}
-               program={program}
-               level={0}
-               onProgramChange={(changedProgram: ProgramModel) => {
+      <PocketixEditor language={metaLanguage}
+                      program={program}
+                      level={0}
+                      onProgramChange={(changedProgram: ProgramModel) => {
                  setProgram(changedProgram);
                  setEvaluateButtonEnabled(true);
                }}
-               key={JSON.stringify(program)}
-               menu={<><Button icon="pi pi-bolt" onClick={() => onProgramTrigger(program)} disabled={!evaluateButtonEnabled}/></>} />
+                      key={JSON.stringify(program)}
+                      menu={<><Button icon="pi pi-bolt" onClick={() => onProgramTrigger(program)} disabled={!evaluateButtonEnabled}/></>} />
     </PrimeReactProvider>
   );
 }

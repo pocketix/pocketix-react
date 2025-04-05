@@ -1,4 +1,4 @@
-import { Program } from "../vpl-editor/model/language.model";
+import { Program } from "pocketix-react/dist/types/model/language.model";
 
 const defaultProgram = {
   "block": [

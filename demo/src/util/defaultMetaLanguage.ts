@@ -1,4 +1,4 @@
-import { Language } from "../vpl-editor/model/meta-language.model";
+import { Language } from "pocketix-react/dist/types/model/meta-language.model";
 
 const defaultMetaLanguage = {
   "variables": [

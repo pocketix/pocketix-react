@@ -2,7 +2,6 @@ import "./More.css";
 import React, { useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
-import { preventDefaults } from "../vpl-editor/util/preventDefaults";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { Dropdown } from "primereact/dropdown";
 import { createVariablesFromDevice } from "../util/createVariablesFromDevice";
@@ -10,8 +9,9 @@ import {
   createCapabilitiesFromDeviceAndCapabilityTemplate
 } from "../util/createCapabilitiesFromDeviceAndCapabilityTemplate";
 import { Group, GroupService, Program, ProgramService, Version } from "../generated";
-import { Language, Statement, Variable } from "../vpl-editor/model/meta-language.model";
+import { Language, Statement, Variable } from "pocketix-react/dist/types/model/meta-language.model";
 import {serializedToReadableCapabilityAndVariablesReplacer} from "../util/capabilityAndVariablesReplacers";
+import {preventDefaults} from "../util/preventDefaults";
 
 const More = (props: {
   onProgramChange: CallableFunction,
@@ -329,20 +329,20 @@ const More = (props: {
             </p>
           </AccordionTab>
           <AccordionTab header="About">
-            <p className="m-0">
-              Pocketix is a block and form based visual programming language and editor currently being developed
-              by <a href="https://www.fit.vut.cz/person/hynek/.en">Jiří Hynek</a> (<a
-              href="mailto:hynek@fit.vut.cz">hynek@fit.vut.cz</a>) and <a
-              href="https://www.fit.vut.cz/person/ijohn/.en">Petr John</a> (<a
-              href="mailto:ijohn@fit.vut.cz">ijohn@fit.vut.cz</a>) at <a href="https://www.fit.vut.cz/.en">BUT
-              FIT</a> primarily aimed at the automation of smart devices on mobile phones. The first prototype of the
-              tool was developed in cooperation between BUT FIT and the company <a
-              href="https://www.logimic.com/cs/">Logimic</a> in the project <a
-              href="https://www.fit.vut.cz/research/project/1692/.en">Services for Water Management and Monitoring
-              Systems in Retention Basins</a>. While the first prototype remained internal to Logimc. The current
-              version of the prototype is free of any ties to the Logimic company and is available under the MIT
-              licence.
-            </p>
+              <p className="m-0">
+                  Pocketix is a block and form based visual programming language and editor currently being developed
+                  by <a href="https://www.fit.vut.cz/person/ijohn/.en">Petr John</a> (<a
+                  href="mailto:ijohn@fit.vut.cz">ijohn@fit.vut.cz</a>) and <a
+                  href="https://www.fit.vut.cz/person/hynek/.en">Jiří Hynek
+                  </a> (<a href="mailto:hynek@fit.vut.cz">hynek@fit.vut.cz</a>) at <a href="https://www.fit.vut.cz/.en">BUT
+                  FIT</a> primarily aimed at the automation of smart devices on mobile phones. The first prototype of the
+                  tool was developed in cooperation between BUT FIT and the company <a
+                  href="https://www.logimic.com/cs/">Logimic</a> in the project <a
+                  href="https://www.fit.vut.cz/research/project/1692/.en">Services for Water Management and Monitoring
+                  Systems in Retention Basins</a>. See more information on both <a
+                  href="https://dexter.fit.vutbr.cz/">Dexter@FIT HomePage</a> and <a
+                  href="https://github.com/pocketix">Pocketix Organisation</a>
+              </p>
           </AccordionTab>
         </Accordion>
 
