@@ -20,13 +20,15 @@ To get started with the `pocketix-react` project, you need to have [Node.js](htt
 git clone https://github.com/pocketix/pocketix-react.git
 cd pocketix-react
 ```
-# Step 2: Install Dependencies
+### Step 2: Install Dependencies
 Run the following command to install all necessary dependencies:
 
 ```
 npm run install:all
-Step 3: Start the Development Server
 ```
+
+### Step 3: Start the Development Server
+
 To run the local development/demo version of the project, use the following command:
 ```
 npm run start:demo
