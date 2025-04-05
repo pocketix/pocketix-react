@@ -1,46 +1,63 @@
-# Getting Started with Create React App
+# Pocketix React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Pocketix is a block- and form-based visual programming language (VPL) editor aimed at automating smart home devices. It is currently being developed by [Petr John](https://www.fit.vut.cz/person/ijohn/.en) and [Jiří Hynek](https://www.fit.vut.cz/person/hynek/.en) at [BUT FIT](https://www.fit.vut.cz/.en), with the first prototype developed in collaboration with [Logimic](https://www.logimic.com/cs/) for the project *Services for Water Management and Monitoring Systems in Retention Basins*.
 
-## Available Scripts
+You can find more information about the project on the [Dexter@FIT HomePage](https://dexter.fit.vutbr.cz/) and the [Pocketix Organization on GitHub](https://github.com/pocketix).
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- A visual programming language editor designed specifically for smart home automation.
+- Block-based and form-based interfaces for intuitive creation of automation rules.
+- Focus on integrating smart home devices and controlling them through visual programming.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Installation
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+To get started with the `pocketix-react` project, you need to have [Node.js](https://nodejs.org/en/) (v20 or later) and [npm](https://www.npmjs.com/) installed.
 
-### `npm test`
+### Step 1: Clone the Repository
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+git clone https://github.com/pocketix/pocketix-react.git
+cd pocketix-react
+```
+# Step 2: Install Dependencies
+Run the following command to install all necessary dependencies:
 
-### `npm run build`
+```
+npm run install:all
+Step 3: Start the Development Server
+```
+To run the local development/demo version of the project, use the following command:
+```
+npm run start:demo
+```
+This will start a local server, and you can view the project in your browser.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Usage
+The pocketix-react app provides a user interface for editing and creating smart home automation rules through a visual programming editor. Users can drag and drop blocks to design their automation workflows, making it accessible for users with minimal programming experience.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Key Features
+- Visual Programming Blocks: Users can connect blocks to define the flow of automation logic.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Smart Home Device Integration: The editor allows for the inclusion of smart devices in the workflow.
 
-### `npm run eject`
+- Form-Based Configuration: Blocks can be configured through forms to define actions, conditions, and parameters.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# Contributing
+We welcome contributions! If you'd like to contribute to the project, please follow these guidelines:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1) Fork the repository and create a new branch for your feature or fix.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+2) Ensure that your code adheres to the project's coding standards, which are checked by ESLint (configured in `.eslintrc.json`).
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+3) Test your changes thoroughly, and make sure the project runs as expected.
 
-## Learn More
+4) Create a pull request with a clear description of your changes and why they should be merged.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Roadmap
+- Integration examples: Later versions will include integration examples for various smart home platforms.
+
+- Library distribution: The project will be made available as a library for use in other applications.
