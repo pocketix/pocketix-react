@@ -46,6 +46,7 @@ The app provides a visual editor for creating and managing automation rules. Use
 - Save, test, and iterate on automation flows without writing code
 
 ## **Related Projects**
+- 🔗 [vpl-for-things](https://github.com/pocketix/vpl-for-things) — WIP version of new editor built in Lit compatible with Pocketix v2 language
 - 🔗 [pocketixng](https://github.com/pocketix/pocketixng) — A code-oriented Angular editor for IoT automation using the Pocketix v1 scripting language
 - 🔗 [Pocketix Node Interpreter](https://github.com/pocketix/pocketix-node) — Executes automation scripts created with Pocketix tools
 - 🔗 [Pocketix Node Core](https://github.com/pocketix/pocketix-node-core) — A simple environment for basic IoT management
@@ -63,6 +64,5 @@ This project is licensed under the MIT License.
 See the [LICENSE](LICENSE) file for full details.
 
 ## **Roadmap**
-- 🧩 Integration examples for popular smart home platforms
 - 📦 Library distribution for embedding in other apps
 - 🧪 Enhanced testing and usability improvements  
