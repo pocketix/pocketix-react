@@ -1,3 +1,10 @@
+resolver 8.8.8.8 ipv6=off;
+resolver 1.1.1.1;
+
+map $host $api_url {
+  default "${API_URL}";
+}
+
 server {
   listen 80;
   sendfile on;
@@ -11,6 +18,10 @@ server {
   gzip_proxied      expired no-cache no-store private auth;
   gzip_types        text/plain text/css application/json application/javascript application/x-javascript text/xml application/xml application/xml+rss text/javascript;
   gzip_comp_level   9;
+
+  location ~ ^/api/(.*)$ {
+    proxy_pass $api_url/$1$is_args$args;
+  }
 
   location / {
     root /usr/share/nginx/html;

@@ -27,10 +27,10 @@ const getCurrentBaseUrl = () => {
       return process.env.REACT_BACKEND_URL;
   }
 
-  return (url.port !== "80" && url.port !== "443") ? `${url.protocol}//${url.hostname}:3000` : `${url.protocol}//${url.hostname}:3000`;
+  return `${url.protocol}//${url.hostname}:${(url.port && url.port !== "80" && url.port !== "443") ? ":3000" : "/api"}`
 };
 
-OpenAPI.BASE = `${getCurrentBaseUrl()}/api`;
+OpenAPI.BASE = `${getCurrentBaseUrl()}`;
 
 function App() {
   const [program, setProgram] = useState(defaultProgram);
