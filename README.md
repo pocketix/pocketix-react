@@ -1,5 +1,5 @@
 # **pocketix-react**
-A block- and form-based visual programming editor for smart home automation built for React.
+A block- and form-based visual programming editor for smart home automation built for React [Try it out](https://pocketix-react.iot.petr-john.cz/)!
 
 ## **Overview**
 **pocketix-react** is part of the broader **Pocketix** project — a visual programming language (VPL) designed for automating IoT and smart home devices. It enables users to design automation flows through drag-and-drop blocks and configurable forms, making it approachable for non-programmers.
