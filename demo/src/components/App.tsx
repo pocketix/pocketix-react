@@ -72,7 +72,7 @@ function App() {
       <Toast ref={toast} position="bottom-center"/>
       <div className="heading-content">
         <h1>
-          Pocketix
+          Pocketix React
         </h1>
         <More onProgramChange={setProgram} onMetaLanguageChange={setMetaLanguage} onCapabilitiesChange={setCapabilities}
               onVariablesChange={setVariables} />

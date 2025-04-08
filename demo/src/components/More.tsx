@@ -177,7 +177,7 @@ const More = (props: {
         className="fullscreen-modal"
       >
         <div className="heading-content">
-          <h1>About Pocketix</h1>
+          <h1>About Pocketix React</h1>
           <Button icon="pi pi-angle-double-right" onClick={hideDialog} />
         </div>
 
