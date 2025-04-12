@@ -84,7 +84,6 @@ function App() {
                  setProgram(changedProgram);
                  setEvaluateButtonEnabled(true);
                }}
-                      key={JSON.stringify(program)}
                       menu={<><Button icon="pi pi-bolt" onClick={() => onProgramTrigger(program)} disabled={!evaluateButtonEnabled}/></>} />
     </PrimeReactProvider>
   );
