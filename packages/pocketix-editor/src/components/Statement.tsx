@@ -19,7 +19,7 @@ const Statement = (props: {
   onRemove: CallableFunction;
   onOpen?: CallableFunction;
 }) => {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isOpen, setIsOpen] = useState((props.isOpen || true) as boolean);
 
 	const toggleAccordion = () => {
 		setIsOpen(!isOpen);
