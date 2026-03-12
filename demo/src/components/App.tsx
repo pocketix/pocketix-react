@@ -27,10 +27,10 @@ const getCurrentBaseUrl = () => {
       return process.env.REACT_BACKEND_URL;
   }
 
-  return (url.port !== "80" && url.port !== "443") ? `${url.protocol}//${url.hostname}:3000` : `${url.protocol}//${url.hostname}:3000`;
+  return `${url.protocol}//${url.hostname}:${(url.port && url.port !== "80" && url.port !== "443") ? ":3000" : "/api"}`
 };
 
-OpenAPI.BASE = `${getCurrentBaseUrl()}/api`;
+OpenAPI.BASE = `${getCurrentBaseUrl()}`;
 
 function App() {
   const [program, setProgram] = useState(defaultProgram);
@@ -72,7 +72,7 @@ function App() {
       <Toast ref={toast} position="bottom-center"/>
       <div className="heading-content">
         <h1>
-          Pocketix
+          Pocketix React
         </h1>
         <More onProgramChange={setProgram} onMetaLanguageChange={setMetaLanguage} onCapabilitiesChange={setCapabilities}
               onVariablesChange={setVariables} />
@@ -84,7 +84,6 @@ function App() {
                  setProgram(changedProgram);
                  setEvaluateButtonEnabled(true);
                }}
-                      key={JSON.stringify(program)}
                       menu={<><Button icon="pi pi-bolt" onClick={() => onProgramTrigger(program)} disabled={!evaluateButtonEnabled}/></>} />
     </PrimeReactProvider>
   );
