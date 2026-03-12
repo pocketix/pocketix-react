@@ -2,7 +2,7 @@
 
 Pocketix is a block- and form-based visual programming language (VPL) editor aimed at automating smart home devices. It is currently being developed by [Petr John](https://www.fit.vut.cz/person/ijohn/.en) and [Jiří Hynek](https://www.fit.vut.cz/person/hynek/.en) at [BUT FIT](https://www.fit.vut.cz/.en), with the first prototype developed in collaboration with [Logimic](https://www.logimic.com/cs/) for the project *Services for Water Management and Monitoring Systems in Retention Basins*.
 
-You can find more information about the project on the [Dexter@FIT HomePage](https://dexter.fit.vutbr.cz/) and the [Pocketix Organization on GitHub](https://github.com/pocketix).
+You can find more information about the project on the [Pocketix Organization on GitHub](https://github.com/pocketix).
 
 ## Features
 
@@ -58,8 +58,3 @@ We welcome contributions! If you'd like to contribute to the project, please fol
 
 # License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-# Roadmap
-- Integration examples: Later versions will include integration examples for various smart home platforms.
-
-- Library distribution: The project will be made available as a library for use in other applications.
