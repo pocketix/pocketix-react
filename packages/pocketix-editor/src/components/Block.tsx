@@ -13,6 +13,7 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { useEffect, useState } from "react";
 import { AutoComplete } from "primereact/autocomplete";
+import posthog from "posthog-js";
 
 const Block = (props: {
   block: LanguageBlock,
@@ -65,6 +66,12 @@ const Block = (props: {
     setBlock(newBlock);
 
     props.onUpdate(newBlock);
+
+    posthog.capture('added_statement', {
+      statement: selectedItem.name,
+      timestamp: new Date().toISOString(),
+      vpl_version: 'vpl_old'
+    });
   };
 
   const move = (index: number, direction: number) => {
@@ -80,9 +87,21 @@ const Block = (props: {
 
     setBlock(blockNextState);
     props.onUpdate(blockNextState);
+
+    posthog.capture('moved_statement', {
+      movement: direction === 1 ? 'moved_down' : 'moved_up',
+      timestamp: new Date().toISOString(),
+      vpl_version: 'vpl_old'
+    });
   };
 
   const remove = (index: number) => {
+    posthog.capture('removed_statement', {
+      type: block[index].name,
+      timestamp: new Date().toISOString(),
+      vpl_version: 'vpl_old'
+    });
+
     const blockNextState = [...block];
     blockNextState.splice(index, 1);
     setBlock(blockNextState);

@@ -12,6 +12,8 @@ import { preventDefaults } from "../util/preventDefaults";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Dialog } from "primereact/dialog";
 import { PrimeReactProvider } from "primereact/api";
+import posthog from "posthog-js";
+import { time } from "console";
 
 const PocketixEditor = (props: {
   program: ProgramModel,
@@ -70,9 +72,20 @@ const PocketixEditor = (props: {
         manualSync: !settings.common.manualSync
       }
     });
+
+    posthog.capture('toggled_manual_sync', {
+      enabled: !settings.common.manualSync,
+      timestamp: new Date().toISOString(),
+      vpl_version: 'vpl_old'
+    });
   };
 
   const undo = () => {
+    posthog.capture('undo_action', {
+      timestamp: new Date().toISOString(),
+      vpl_verison: 'vpl_old'
+    });
+
     setRedoList([...redoList, JSON.stringify(program)]);
     const newUndoList = [...undoList];
     const undoneProgram = (JSON.parse(newUndoList.pop() as string));
@@ -81,6 +94,11 @@ const PocketixEditor = (props: {
   };
 
   const redo = () => {
+    posthog.capture('redo_action', {
+      timestamp: new Date().toISOString(),
+      vpl_verison: 'vpl_old'
+    });
+
     setUndoList([...undoList, JSON.stringify(program)]);
     const newRedoList = [...redoList];
     const redoneProgram = (JSON.parse(newRedoList.pop() as string));
