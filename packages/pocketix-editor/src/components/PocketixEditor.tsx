@@ -27,10 +27,10 @@ const PocketixEditor = (props: {
   const [program, setProgram] = useState(programWithIds);
   const [visualProgram, setVisualProgram] = useState(programWithIds);
   const [textProgram, setTextProgram] = useState(props.program);
-  const [settings, setSettings] = useState(props?.settings ?? defaultSettings);
   const [language, setLanguage] = useState(props.language);
 
   const [dialogVisible, setDialogVisible] = useState(false);
+  const [isAgreeVisible, setIsAgreeVisible] = useState(true);
   const [languageString, setLanguageString] = useState(JSON.stringify(language, null, 2));
   const [languageSyntaxError, setLanguageSyntaxError] = useState(false);
   const [timer, setTimer] = useState(undefined as NodeJS.Timeout | undefined);
@@ -39,6 +39,17 @@ const PocketixEditor = (props: {
   const [redoList, setRedoList] = useState([] as string[]);
 
   const [mobileClosedVisualEditor, setMobileClosedVisualEditor] = useState(false);
+
+  const [settings, setSettings] = useState(() => {
+    const baseSettings = props?.settings ?? defaultSettings;
+    return {
+      ...baseSettings,
+      textEditor: {
+        ...baseSettings.textEditor,
+        enabled: false
+      }
+    };
+  });
 
   const onEnableToggleVisual = () => {
     const visualEditorSettings = {
@@ -83,7 +94,7 @@ const PocketixEditor = (props: {
   const undo = () => {
     posthog.capture('undo_action', {
       timestamp: new Date().toISOString(),
-      vpl_verison: 'vpl_old'
+      vpl_version: 'vpl_old'
     });
 
     setRedoList([...redoList, JSON.stringify(program)]);
@@ -96,7 +107,7 @@ const PocketixEditor = (props: {
   const redo = () => {
     posthog.capture('redo_action', {
       timestamp: new Date().toISOString(),
-      vpl_verison: 'vpl_old'
+      vpl_version: 'vpl_old'
     });
 
     setUndoList([...undoList, JSON.stringify(program)]);
@@ -104,6 +115,14 @@ const PocketixEditor = (props: {
     const redoneProgram = (JSON.parse(newRedoList.pop() as string));
     setAllPrograms(redoneProgram);
     setRedoList(newRedoList);
+  };
+
+  const handleAgreeClose = () => {
+    posthog.capture('data_analysis_agreed', {
+      timestamp: new Date().toISOString(),
+      vpl_version: 'vpl_old'
+    });
+    setIsAgreeVisible(false);
   };
 
   const updateProgram = (newProgramRaw: ProgramModel) => {
@@ -236,6 +255,29 @@ const PocketixEditor = (props: {
               footer={footer}>
         <InputTextarea value={languageString} style={settings.textEditor?.style} className={`lang-text-area ${languageSyntaxError ? "error" : ""}`}
                        onChange={(e) => updateLanguageAndTriggerCheck(e.target.value)} rows={5} cols={30}/>
+      </Dialog>
+
+      <Dialog 
+        header="Souhlas se zpracováním dat"
+        visible={isAgreeVisible}
+        style={{ width: '550px' }}
+        modal
+        onHide={() => {}}
+        contentStyle={{ padding: '1.5rem 2rem'}}
+        closable={false} 
+        draggable={false}
+        resizable={false}
+        footer={
+          <div>
+            <Button label="Souhlasím" icon="pi pi-check" onClick={handleAgreeClose} autoFocus />
+          </div>
+        }
+      >
+        <p className="m-0">
+          Souhlasím se zpracováním údajů o mém pohybu na stránce pro účely analytiky a vylepšení aplikace.
+          <br /><br />
+          Veškerá data jsou anonymizována a slouží pouze k technickému zdokonalení nástroje.
+        </p>
       </Dialog>
     </PrimeReactProvider>
   );

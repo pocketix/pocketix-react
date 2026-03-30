@@ -25,6 +25,13 @@ const Expression = (props: {
   const textAreaRef = useRef({} as HTMLTextAreaElement);
   const [isChanged, setIsChanged] = useState(false);
 
+  const handleDialogSpie = () => {
+    posthog.capture('opened_expression_editor', {
+      timestamp: new Date().toISOString(),
+      vpl_version: 'vpl_old'
+    });
+  };
+
   const addVariable = () => {
     if (!selectedVariable.label)
       return;
@@ -95,6 +102,7 @@ const Expression = (props: {
         <Button  icon="pi pi-ellipsis-h" disabled={syntaxError} onClick={(event) => {
           setVisible(true);
           preventDefaults(event);
+          handleDialogSpie();
         }} style={{
           backgroundColor: props.backgroundColor,
           borderColor: props.color,
