@@ -8,6 +8,17 @@
 	"install:all": "npm ci --maxsockets 1 --workspace packages/pocketix-editor && npm ci --maxsockets 1 --workspace demo && npm ci --maxsockets 1"
   },
   "author": "Petr John",
+  "contributors": [
+    {
+      "name": "Petr John"
+    },
+    {
+      "name": "Jiří Hynek"
+    },
+    {
+      "name": "Marek Chvatík"
+    }
+  ],
   "license": "MIT",
   "bugs": {
 	"url": "https://github.com/pocketix/pocketix-react/issues"
