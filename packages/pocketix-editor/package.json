@@ -6,12 +6,12 @@
   "module": "dist/index.esm.js",
   "types": "dist/types/index.d.ts",
   "publishConfig": {
-	"registry": "https://npm.pkg.github.com/"
+    "registry": "https://npm.pkg.github.com/"
   },
   "scripts": {
     "build": "rollup -c",
-	"postinstall": "npm run build",
-	"prepublishOnly": "npm run build"
+    "postinstall": "npm run build",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -40,6 +40,7 @@
     "@types/react-dom": "^18.2.19",
     "eslint": "^8.57.0",
     "eslint-plugin-node": "^11.1.0",
+    "posthog-js": "^1.363.4",
     "primeicons": "^6.0.1",
     "primereact": "^10.5.1",
     "react": "^18.2.0",

@@ -103,6 +103,7 @@ const CmdStatement = (props: {
                 <div key={parameter} className="input-group">
                   <Expression
                     language={props.language} expressionValue={parameter}
+                    blockType={props.statement.name}
                     onExpressionValueChanged={(value: string) => editStatementParam(value, index)}
                     color={(statementFromLanguage.color ?? defaultStatementLanguage.color ?? "")}
                     backgroundColor={backgroundColor}/>

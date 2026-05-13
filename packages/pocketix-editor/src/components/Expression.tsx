@@ -7,12 +7,14 @@ import { Dropdown } from "primereact/dropdown";
 import { Language, Variable } from "../model/meta-language.model";
 import { InputText } from "primereact/inputtext";
 import { preventDefaults } from "../util/preventDefaults";
+import posthog from "posthog-js";
 
 const Expression = (props: {
   language: Language,
   expressionValue?: string,
   color: string,
   backgroundColor: string,
+  blockType?: string,
   onExpressionValueChanged?: CallableFunction
 }) => {
   const variables = props.language.variables;
@@ -21,6 +23,14 @@ const Expression = (props: {
   const [expressionString, setExpressionString] = useState(props.expressionValue?.toString() ? props.expressionValue : "");
   const [selectedVariable, setSelectedVariable] = useState({} as Variable);
   const textAreaRef = useRef({} as HTMLTextAreaElement);
+  const [isChanged, setIsChanged] = useState(false);
+
+  const handleDialogSpie = () => {
+    posthog.capture('opened_expression_editor', {
+      timestamp: new Date().toISOString(),
+      vpl_version: 'vpl_old'
+    });
+  };
 
   const addVariable = () => {
     if (!selectedVariable.label)
@@ -31,19 +41,44 @@ const Expression = (props: {
 
     const newString = expressionString.substring(0, start) + selectedVariable.label + expressionString.substring(end, expressionString.length);
     setExpressionString(newString);
+
+    posthog.capture('added_variable_to_expression', {
+      variable: selectedVariable.label,
+      timestamp: new Date().toISOString(),
+      vpl_version: 'vpl_old'
+    });
   };
 
   const updateExpression = (value: string) => {
     setExpressionString(value);
+    setIsChanged(true);
   };
 
   const setExpressionAndClose = () => {
     updateExpression(expressionString);
     props.onExpressionValueChanged?.(expressionString);
     setVisible(false);
+
+    posthog.capture('updated_expression_dialog', {  
+      expression: expressionString,
+      block_type: props.blockType,
+      timestamp: new Date().toISOString(),
+      vpl_version: 'vpl_old'
+    });
   };
 
   const onBlur = (value: string) => {
+    if (isChanged) {
+      posthog.capture('updated_expression_input_field', {
+        expression: expressionString,
+        block_type: props.blockType,
+        timestamp: new Date().toISOString(),
+        vpl_version: 'vpl_old'
+      });
+
+      setIsChanged(false);
+    }
+
     updateExpression(value);
     props.onExpressionValueChanged?.(expressionString);
     setVisible(false);
@@ -67,6 +102,7 @@ const Expression = (props: {
         <Button  icon="pi pi-ellipsis-h" disabled={syntaxError} onClick={(event) => {
           setVisible(true);
           preventDefaults(event);
+          handleDialogSpie();
         }} style={{
           backgroundColor: props.backgroundColor,
           borderColor: props.color,
