@@ -4,7 +4,7 @@ import { Program as ProgramModel, Block as BlockModel } from "../model/language.
 import { Language } from "../model/meta-language.model";
 import { TextEditor } from "./TextEditor";
 import "./Program.css";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { EditorSettings, TextEditorSettings, VisualEditorSettings } from "../model/editor-settings.model";
 import { defaultSettings } from "../util/defaultSettings";
 import { generateIds, removeIds } from "../util/makeId";
@@ -50,6 +50,40 @@ const PocketixEditor = (props: {
       }
     };
   });
+
+  const previousSettingsProp = useRef(props.settings);
+
+  useEffect(() => {
+    const incomingProgram = generateIds(props.program);
+
+    if (JSON.stringify(incomingProgram) !== JSON.stringify(program)) {
+      setProgram(incomingProgram);
+      setVisualProgram(incomingProgram);
+      setTextProgram(props.program);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.program]);
+
+  useEffect(() => {
+    setLanguage(props.language);
+  }, [props.language]);
+
+  useEffect(() => {
+    if (JSON.stringify(props.settings) === JSON.stringify(previousSettingsProp.current)) {
+      return;
+    }
+
+    previousSettingsProp.current = props.settings;
+
+    const baseSettings = props.settings ?? defaultSettings;
+    setSettings({
+      ...baseSettings,
+      textEditor: {
+        ...baseSettings.textEditor,
+        enabled: false
+      }
+    });
+  }, [props.settings]);
 
   const onEnableToggleVisual = () => {
     const visualEditorSettings = {

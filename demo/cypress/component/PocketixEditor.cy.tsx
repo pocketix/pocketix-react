@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { PocketixEditor } from "pocketix-react";
 import type { Program } from "pocketix-react/dist/types/model/language.model";
 import type { Language } from "pocketix-react/dist/types/model/meta-language.model";
@@ -77,5 +78,42 @@ describe("PocketixEditor (shared cross-repo scenarios)", () => {
   it.skip("does not crash when the language has no '_' root entry", () => {
     mountEditor(empty as unknown as Program, languageMissingRoot as unknown as Language);
     scenarios.rootAddButtonRendersWithoutCrashing(sel);
+  });
+});
+
+// Regression test for the "can't hot-swap a loaded program after mount" bug
+// (see main report: PocketixEditor.tsx seeds program/visualProgram/textProgram
+// via useState(props.X) once, with no useEffect to resync on prop changes).
+// This is inherently React-specific (re-rendering an already-mounted
+// component with new props), unlike the shared accordion-DOM scenarios above.
+function ProgramSwapHarness() {
+  const [program, setProgram] = useState(siblings as unknown as Program);
+
+  return (
+    <>
+      <button data-testid="swap-to-empty" onClick={() => setProgram(empty as unknown as Program)}>
+        Use Selected Program
+      </button>
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={program}
+        level={0}
+        onProgramChange={() => {}}
+      />
+    </>
+  );
+}
+
+describe("PocketixEditor hot-swap", () => {
+  it("updates the visible editor when a new program prop is loaded after mount", () => {
+    cy.mount(<ProgramSwapHarness />);
+    cy.contains("button", "Souhlasím").click();
+    cy.get(".p-dialog-mask").should("not.exist");
+
+    scenarios.rendersStatementTitles(sel, ["Set Value", "Set Value"]);
+
+    cy.get('[data-testid="swap-to-empty"]').click();
+
+    scenarios.rendersStatementTitles(sel, []);
   });
 });
