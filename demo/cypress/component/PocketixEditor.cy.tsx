@@ -145,6 +145,58 @@ function ParamEditHarness() {
   );
 }
 
+// Regression test for Expression.tsx never resyncing from props.expressionValue
+// (see main report: `expressionString` was seeded via useState(props.expressionValue)
+// once, with no useEffect to resync on prop changes — same missing-resync
+// pattern as PocketixEditor.tsx's program/language/settings, item 4).
+//
+// Uses an "if" statement's *condition* rather than a command param: Block.tsx
+// keys CompoundStatement by `statement.id` (stable), but CmdStatement keys
+// each param's wrapper div by the param's raw *value* (see the separate
+// duplicate-key bug report) — changing a param's value there remounts a
+// fresh Expression instance, which would trivially show the right value
+// even without a resync fix and defeat this regression test.
+const ifProgram = {
+  block: [{ id: "if1", name: "if", condition: "first", block: [{ id: "cmd1", name: "setValue", params: ["x"] }] }]
+};
+
+function ExpressionSwapHarness() {
+  const [program, setProgram] = useState(ifProgram as unknown as Program);
+
+  return (
+    <>
+      <button
+        data-testid="swap-condition"
+        onClick={() => setProgram({
+          block: [{ id: "if1", name: "if", condition: "changed", block: [{ id: "cmd1", name: "setValue", params: ["x"] }] }]
+        } as unknown as Program)}
+      >
+        Swap
+      </button>
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={program}
+        level={0}
+        onProgramChange={(p: Program) => setProgram(p)}
+      />
+    </>
+  );
+}
+
+describe("Expression resync", () => {
+  it("updates the displayed value when props.expressionValue changes after mount", () => {
+    cy.mount(<ExpressionSwapHarness />);
+    cy.contains("button", "Souhlasím").click();
+    cy.get(".p-dialog-mask").should("not.exist");
+
+    cy.get(".accordion-header-content input.input-field").should("have.value", "first");
+
+    cy.get('[data-testid="swap-condition"]').click();
+
+    cy.get(".accordion-header-content input.input-field").should("have.value", "changed");
+  });
+});
+
 describe("CmdStatement stale local-state mirror", () => {
   it("builds the next edit on the post-undo params, not a stale pre-undo copy", () => {
     cy.mount(<ParamEditHarness />);

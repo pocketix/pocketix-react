@@ -1,5 +1,5 @@
 import { Dialog } from "primereact/dialog";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./Expression.css";
 import { Button } from "primereact/button";
 import { InputTextarea } from "primereact/inputtextarea";
@@ -24,6 +24,10 @@ const Expression = (props: {
   const [selectedVariable, setSelectedVariable] = useState({} as Variable);
   const textAreaRef = useRef({} as HTMLTextAreaElement);
   const [isChanged, setIsChanged] = useState(false);
+
+  useEffect(() => {
+    setExpressionString(props.expressionValue?.toString() ? props.expressionValue : "");
+  }, [props.expressionValue]);
 
   const handleDialogSpie = () => {
     posthog.capture('opened_expression_editor', {
