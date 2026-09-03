@@ -52,16 +52,26 @@ const PocketixEditor = (props: {
   });
 
   const previousSettingsProp = useRef(props.settings);
+  const previousProgramProp = useRef(props.program);
 
   useEffect(() => {
-    const incomingProgram = generateIds(props.program);
-
-    if (JSON.stringify(incomingProgram) !== JSON.stringify(program)) {
-      setProgram(incomingProgram);
-      setVisualProgram(incomingProgram);
-      setTextProgram(props.program);
+    // Compare the raw incoming prop against the raw prop we last processed -
+    // NOT a freshly regenerated-ids version against the (already id-ful)
+    // local state. generateIds() assigns new random ids to any id-less node
+    // on every call, so comparing two independently-regenerated versions of
+    // an id-less program would almost always "differ" even though
+    // props.program itself never changed, causing a spurious resync/remount
+    // shortly after every mount.
+    if (JSON.stringify(props.program) === JSON.stringify(previousProgramProp.current)) {
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    previousProgramProp.current = props.program;
+
+    const incomingProgram = generateIds(props.program);
+    setProgram(incomingProgram);
+    setVisualProgram(incomingProgram);
+    setTextProgram(props.program);
   }, [props.program]);
 
   useEffect(() => {
