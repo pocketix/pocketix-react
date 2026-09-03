@@ -2,7 +2,7 @@ import {Program} from "../model/language.model";
 import { useEffect, useState } from "react";
 import {InputTextarea} from "primereact/inputtextarea";
 import "./TextEditor.css"
-import posthog from "posthog-js";
+import { captureAnalyticsEvent } from "../util/analytics";
 
 const TextEditor = (props: { program: Program, onProgramChange: CallableFunction }) => {
   const convertProgramToEditorContent = (program: Program) => JSON.stringify(program.block, null, 2);
@@ -46,7 +46,7 @@ const TextEditor = (props: { program: Program, onProgramChange: CallableFunction
 
 	const onTextOutputChange = () => {
 		if (changed) {
-			posthog.capture('edited_program_in_text_editor', {
+			captureAnalyticsEvent('edited_program_in_text_editor', {
 				timestamp: new Date().toISOString(),
 				vpl_version: 'vpl_old'
 			});

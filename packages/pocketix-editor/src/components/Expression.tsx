@@ -7,7 +7,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Language, Variable } from "../model/meta-language.model";
 import { InputText } from "primereact/inputtext";
 import { preventDefaults } from "../util/preventDefaults";
-import posthog from "posthog-js";
+import { captureAnalyticsEvent } from "../util/analytics";
 
 const Expression = (props: {
   language: Language,
@@ -30,7 +30,7 @@ const Expression = (props: {
   }, [props.expressionValue]);
 
   const handleDialogSpie = () => {
-    posthog.capture('opened_expression_editor', {
+    captureAnalyticsEvent('opened_expression_editor', {
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'
     });
@@ -46,7 +46,7 @@ const Expression = (props: {
     const newString = expressionString.substring(0, start) + selectedVariable.label + expressionString.substring(end, expressionString.length);
     setExpressionString(newString);
 
-    posthog.capture('added_variable_to_expression', {
+    captureAnalyticsEvent('added_variable_to_expression', {
       variable: selectedVariable.label,
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'
@@ -63,7 +63,7 @@ const Expression = (props: {
     props.onExpressionValueChanged?.(expressionString);
     setVisible(false);
 
-    posthog.capture('updated_expression_dialog', {  
+    captureAnalyticsEvent('updated_expression_dialog', {  
       expression: expressionString,
       block_type: props.blockType,
       timestamp: new Date().toISOString(),
@@ -73,7 +73,7 @@ const Expression = (props: {
 
   const onBlur = (value: string) => {
     if (isChanged) {
-      posthog.capture('updated_expression_input_field', {
+      captureAnalyticsEvent('updated_expression_input_field', {
         expression: expressionString,
         block_type: props.blockType,
         timestamp: new Date().toISOString(),

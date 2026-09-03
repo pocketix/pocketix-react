@@ -2,6 +2,7 @@ import { useState } from "react";
 import { PocketixEditor } from "pocketix-react";
 import type { Program } from "pocketix-react/dist/types/model/language.model";
 import type { Language } from "pocketix-react/dist/types/model/meta-language.model";
+import type { EditorSettings } from "pocketix-react/dist/types/model/editor-settings.model";
 
 import language from "../../../../pocketix-vpl-shared-tests/fixtures/language.json";
 import languageMissingRoot from "../../../../pocketix-vpl-shared-tests/fixtures/language-missing-root.json";
@@ -20,13 +21,6 @@ const { common, perRepo } = selectorsModule as unknown as {
 // This repo's full selector set: shared base + React-specific cosmetic classes.
 const sel = { ...common, ...perRepo.react };
 
-/**
- * PocketixEditor always mounts with a hardcoded, non-dismissible-by-props
- * GDPR/analytics consent modal on top of everything (`isAgreeVisible` starts
- * `true` with no `settings` flag to skip it — see main bug report). Every
- * test has to dismiss it first or all later `cy.get(...)` interactions are
- * blocked by the modal overlay.
- */
 function mountEditor(program: Program, lang: Language = language as unknown as Language) {
   cy.mount(
     <PocketixEditor
@@ -36,8 +30,7 @@ function mountEditor(program: Program, lang: Language = language as unknown as L
       onProgramChange={() => {}}
     />
   );
-  cy.contains("button", "Souhlasím").click();
-  cy.get(".p-dialog-mask").should("not.exist");
+  cy.get(sel.block).should("exist");
 }
 
 describe("PocketixEditor (shared cross-repo scenarios)", () => {
@@ -107,8 +100,6 @@ function ProgramSwapHarness() {
 describe("PocketixEditor hot-swap", () => {
   it("updates the visible editor when a new program prop is loaded after mount", () => {
     cy.mount(<ProgramSwapHarness />);
-    cy.contains("button", "Souhlasím").click();
-    cy.get(".p-dialog-mask").should("not.exist");
 
     scenarios.rendersStatementTitles(sel, ["Set Value", "Set Value"]);
 
@@ -186,8 +177,6 @@ function ExpressionSwapHarness() {
 describe("Expression resync", () => {
   it("updates the displayed value when props.expressionValue changes after mount", () => {
     cy.mount(<ExpressionSwapHarness />);
-    cy.contains("button", "Souhlasím").click();
-    cy.get(".p-dialog-mask").should("not.exist");
 
     cy.get(".accordion-header-content input.input-field").should("have.value", "first");
 
@@ -200,8 +189,6 @@ describe("Expression resync", () => {
 describe("CmdStatement stale local-state mirror", () => {
   it("builds the next edit on the post-undo params, not a stale pre-undo copy", () => {
     cy.mount(<ParamEditHarness />);
-    cy.contains("button", "Souhlasím").click();
-    cy.get(".p-dialog-mask").should("not.exist");
 
     cy.get(sel.expressionInput).should("have.length", 1);
 
@@ -218,5 +205,67 @@ describe("CmdStatement stale local-state mirror", () => {
     // would mean the add reused a stale pre-undo params array).
     cy.get(".accordion-body .pi-plus").click({ force: true });
     cy.get(sel.expressionInput).should("have.length", 2);
+  });
+});
+
+// Regression tests for the hardcoded, always-on GDPR/analytics consent modal
+// (see main report: no settings flag to disable it, no persistence — it
+// reappeared on every page load and analytics tracked regardless of the
+// modal's state). Fixed behavior: analytics/the modal are opt-in via
+// settings.analytics.enabled (default false, see defaultSettings.ts), and
+// agreeing persists to localStorage so it isn't shown again.
+const CONSENT_STORAGE_KEY = "pocketix-editor-analytics-consent";
+const analyticsEnabledSettings = { analytics: { enabled: true }, common: { manualSync: false } } as EditorSettings;
+
+describe("Analytics consent", () => {
+  beforeEach(() => {
+    window.localStorage.removeItem(CONSENT_STORAGE_KEY);
+  });
+
+  it("does not show the consent modal when analytics is disabled (the default)", () => {
+    mountEditor(siblings as unknown as Program);
+    cy.get(".p-dialog-mask").should("not.exist");
+  });
+
+  it("shows the consent modal when analytics is enabled and not yet consented", () => {
+    cy.mount(
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={siblings as unknown as Program}
+        level={0}
+        onProgramChange={() => {}}
+        settings={analyticsEnabledSettings}
+      />
+    );
+    cy.contains("button", "Souhlasím").should("be.visible");
+  });
+
+  it("hides the modal after agreeing and persists consent across remounts", () => {
+    cy.mount(
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={siblings as unknown as Program}
+        level={0}
+        onProgramChange={() => {}}
+        settings={analyticsEnabledSettings}
+      />
+    );
+    cy.contains("button", "Souhlasím").click();
+    cy.get(".p-dialog-mask").should("not.exist");
+    cy.wrap(null).should(() => {
+      expect(window.localStorage.getItem(CONSENT_STORAGE_KEY)).to.equal("granted");
+    });
+
+    // Remount (simulating a page reload) - consent should already be recorded.
+    cy.mount(
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={siblings as unknown as Program}
+        level={0}
+        onProgramChange={() => {}}
+        settings={analyticsEnabledSettings}
+      />
+    );
+    cy.get(".p-dialog-mask").should("not.exist");
   });
 });

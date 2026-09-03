@@ -2,9 +2,14 @@ type EditorSettings = {
   menu?: MenuSettings,
   visualEditor?: VisualEditorSettings,
   textEditor?: TextEditorSettings
+  analytics?: AnalyticsSettings
   common: {
     manualSync: boolean
   }
+}
+
+type AnalyticsSettings = {
+  enabled: boolean
 }
 
 type MenuSettings = {
@@ -30,4 +35,4 @@ type TextEditorSettings = {
   }
 }
 
-export type { EditorSettings, MenuSettings, VisualEditorSettings, TextEditorSettings };
+export type { EditorSettings, MenuSettings, VisualEditorSettings, TextEditorSettings, AnalyticsSettings };

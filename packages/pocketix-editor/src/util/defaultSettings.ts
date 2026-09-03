@@ -19,6 +19,9 @@ const defaultSettings = {
 		enabled: true,
 		style: {},
 	},
+	analytics: {
+		enabled: false,
+	},
 	common: {
 		manualSync: false,
 	},
