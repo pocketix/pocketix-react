@@ -117,3 +117,54 @@ describe("PocketixEditor hot-swap", () => {
     scenarios.rendersStatementTitles(sel, []);
   });
 });
+
+// Regression test for CmdStatement's stale local-state mirror (see main
+// report: `statementParams` used to be its own useState copy of
+// props.statement.params, never resynced, and every edit handler merged from
+// that stale copy instead of current props). Scenario: an external prop
+// update (e.g. an Undo) restores an older statement without the component
+// remounting (same id/key) — the next local edit must build on the restored
+// data, not silently resurrect the pre-undo state.
+const singleCommandProgram = { block: [{ id: "cmd1", name: "setValue", params: ["first"] }] };
+
+function ParamEditHarness() {
+  const [program, setProgram] = useState(singleCommandProgram as unknown as Program);
+
+  return (
+    <>
+      <button data-testid="undo" onClick={() => setProgram(singleCommandProgram as unknown as Program)}>
+        Undo
+      </button>
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={program}
+        level={0}
+        onProgramChange={(p: Program) => setProgram(p)}
+      />
+    </>
+  );
+}
+
+describe("CmdStatement stale local-state mirror", () => {
+  it("builds the next edit on the post-undo params, not a stale pre-undo copy", () => {
+    cy.mount(<ParamEditHarness />);
+    cy.contains("button", "Souhlasím").click();
+    cy.get(".p-dialog-mask").should("not.exist");
+
+    cy.get(sel.expressionInput).should("have.length", 1);
+
+    // Add a param -> 2 params.
+    cy.get(".accordion-body .pi-plus").click({ force: true });
+    cy.get(sel.expressionInput).should("have.length", 2);
+
+    // External "undo" restores the original (1-param) statement, same id ->
+    // CmdStatement does not remount.
+    cy.get('[data-testid="undo"]').click();
+    cy.get(sel.expressionInput).should("have.length", 1);
+
+    // Adding again must produce 2 params (1 restored + 1 new), not 3 (which
+    // would mean the add reused a stale pre-undo params array).
+    cy.get(".accordion-body .pi-plus").click({ force: true });
+    cy.get(sel.expressionInput).should("have.length", 2);
+  });
+});

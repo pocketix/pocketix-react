@@ -4,7 +4,6 @@ import { AbstractStatement as AbstractStatementModel, Command } from "../model/l
 import "./CmdStatement.css";
 import { Button } from "primereact/button";
 import { Expression } from "./Expression";
-import { useState } from "react";
 import { checkPosition } from "../util/checkPosition";
 
 const defaultStatementLanguage: Statement = {
@@ -40,8 +39,7 @@ const CmdStatement = (props: {
   const params = statementFromLanguage?.extensions?.params;
   const correctPosition = checkPosition(props.position, props.blockLength, props.language, props.statement, props.parent, props.level);
   const updating = false;
-
-  const [statementParams, setStatementParams] = useState(props.statement.params);
+  const statementParams = props.statement.params;
 
   const backgroundColor = (correctPosition) ?
     (updating ? "#00AA00" : (statementFromLanguage?.backgroundColor ?? defaultStatementLanguage.backgroundColor ?? "")) :
@@ -52,16 +50,12 @@ const CmdStatement = (props: {
   const down = () => props.onDown();
 
   const remove = (index: number) => {
-    const newStatementParameters = [...statementParams];
-    newStatementParameters.splice(index, 1);
-    setStatementParams(newStatementParameters);
     props.onRemove();
   };
 
   const editStatementParam = (value: string, index: number) => {
     const newStatementParameters = [...statementParams];
     newStatementParameters[index] = value;
-    setStatementParams(newStatementParameters);
     props.onStatementChanged({
       ...props.statement,
       params: newStatementParameters
@@ -70,7 +64,6 @@ const CmdStatement = (props: {
 
   const add = () => {
     const newStatementParameters = [...statementParams, " "];
-    setStatementParams(newStatementParameters);
     props.onStatementChanged({
       ...props.statement,
       params: newStatementParameters

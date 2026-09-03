@@ -8,7 +8,6 @@ import {
 import "./CompoundStatement.css";
 import { Expression } from "./Expression";
 import { Block } from "./Block";
-import { useState } from "react";
 import { checkPosition } from "../util/checkPosition";
 
 const defaultStatementLanguage: Statement = {
@@ -37,7 +36,6 @@ const CompoundStatement = (props: {
   onStatementChanged: CallableFunction,
   onOpen?: CallableFunction
 }) => {
-  const [statement, setStatement] = useState(props.statement);
   const statementFromLanguage = props.language.statements[props.statement.name];
   const correctPosition = checkPosition(props.position, props.blockLength, props.language, props.statement, props.parent, props.level);
   const updating = false;
@@ -46,13 +44,10 @@ const CompoundStatement = (props: {
     props.language.err.backgroundColor;
 
   function expressionValueChanged(condition: string) {
-    const newStatement = {
-      ...statement,
+    props.onStatementChanged({
+      ...props.statement,
       condition
-    };
-
-    setStatement(newStatement);
-    props.onStatementChanged(newStatement);
+    });
   }
 
   const up = () => props.onUp();
@@ -62,13 +57,10 @@ const CompoundStatement = (props: {
   const remove = () => props.onRemove();
 
   const blockUpdate = (block: BlockModel) => {
-    const newStatement = {
-      ...statement,
+    props.onStatementChanged({
+      ...props.statement,
       block
-    };
-
-    setStatement(newStatement);
-    props.onStatementChanged(newStatement);
+    });
   };
 
   return (
