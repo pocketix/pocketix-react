@@ -60,6 +60,27 @@ describe("PocketixEditor (shared cross-repo scenarios)", () => {
     scenarios.rendersDuplicateValuedParamsAsSeparateRows(sel);
   });
 
+  // Regression test for keying param rows by raw value instead of index (see
+  // main report: two freshly-added/identical-valued params get the same
+  // React key). A pure element-count check doesn't catch this (React still
+  // renders both DOM nodes either way, and Expression's own props-resync
+  // fix happens to paper over the downstream symptom) - assert directly on
+  // React's own "two children with the same key" dev warning instead.
+  it("does not trigger a React duplicate-key warning for identical-valued params", () => {
+    cy.window().then((win) => {
+      cy.spy(win.console, "error").as("consoleError");
+    });
+
+    mountEditor(duplicateParams as unknown as Program);
+    cy.get(sel.expressionInput).should("have.length", 2);
+
+    cy.get("@consoleError").then((spy: any) => {
+      const messages = spy.getCalls().map((call: any) => call.args.join(" "));
+      const hasDuplicateKeyWarning = messages.some((m: string) => m.includes("same key"));
+      expect(hasDuplicateKeyWarning, `console.error calls: ${JSON.stringify(messages)}`).to.equal(false);
+    });
+  });
+
   it("renders bound values for structure-type command params", () => {
     mountEditor(structureParams as unknown as Program);
     scenarios.rendersBoundStructureParamValues(sel);

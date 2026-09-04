@@ -92,7 +92,7 @@ const CmdStatement = (props: {
       header={
         <span>({
           statementParams.map((parameter, index) => <span
-            key={parameter}>{(index ? ", " : "") + parameter}</span>)
+            key={index}>{(index ? ", " : "") + parameter}</span>)
         })</span>
       }
       body={
@@ -100,7 +100,7 @@ const CmdStatement = (props: {
           <>
             {
               statementParams.map((parameter, index) =>
-                <div key={parameter} className="input-group">
+                <div key={index} className="input-group">
                   <Expression
                     language={props.language} expressionValue={parameter}
                     blockType={props.statement.name}
