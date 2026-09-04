@@ -2,6 +2,7 @@ import {
   serializedToReadableCapabilityAndVariablesReplacer,
   readableToSerializedCapabilityAndVariablesReplacer,
 } from "../../src/util/capabilityAndVariablesReplacers";
+import { createVariablesFromDevice } from "../../src/util/createVariablesFromDevice";
 
 // Regression test for "naive whole-JSON substring replace" (see main
 // report: a plain `.replaceAll(id, name)` over the whole serialized
@@ -45,5 +46,27 @@ describe("capabilityAndVariablesReplacers boundary anchoring", () => {
     const backToSerialized = readableToSerializedCapabilityAndVariablesReplacer(readable, capabilities, []);
 
     expect(backToSerialized).to.deep.equal(program);
+  });
+});
+
+// Regression test for "capability names are sanitized but variable labels
+// are not" (see main report: createCapabilitiesFromDeviceAndCapabilityTemplate.ts
+// strips whitespace/operators/dots from device.deviceName, but
+// createVariablesFromDevice.ts didn't - a variable label containing a
+// space embeds an invalid token into condition strings once its label is
+// substituted in, now that checkExpression() actually validates syntax).
+describe("createVariablesFromDevice label sanitization", () => {
+  it("strips whitespace and operator characters from the device name in the label", () => {
+    const device = {
+      deviceUid: "5451",
+      deviceName: "Living Room Lamp",
+      parameterValues: [{ type: { name: "brightness", label: "Brightness" } }],
+    } as any;
+
+    const variables = createVariablesFromDevice(device);
+
+    expect(variables).to.deep.equal([
+      { id: "5451.brightness", label: "LivingRoomLamp.Brightness" },
+    ]);
   });
 });
