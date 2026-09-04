@@ -42,8 +42,8 @@ const Block = (props: {
     Object.entries(props.language.statements).forEach(([key, val]) => {
       if ((!val.levels || val.levels.includes(props.level)) &&
         (!val.avoidLevels || !val.avoidLevels.includes(props.level)) &&
-        (!val.parents || val.parents.includes(props.parent?.name as string)) &&
-        (!val.avoidParents || !val.avoidParents.includes(props.parent?.name as string)) && key.startsWith(query)) {
+        (!val.parents || val.parents.includes(parent.name)) &&
+        (!val.avoidParents || !val.avoidParents.includes(parent.name)) && key.startsWith(query)) {
         suggestions.push({
           ...val
         });

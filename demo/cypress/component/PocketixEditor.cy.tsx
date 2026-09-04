@@ -425,3 +425,36 @@ describe("Adding statements assigns an id immediately", () => {
     });
   });
 });
+
+// Regression test for "root-level add-statement suggestions use wrong
+// parent name" (see main report: Block.tsx's searchSuggestions() filtered
+// on `props.parent?.name`, which is undefined at the root level, instead of
+// the locally-computed `parent.name` that defaults to "_" - so a statement
+// restricted to the root via `parents: ["_"]` never showed up as a root
+// suggestion).
+const languageWithRootOnlyStatement = {
+  ...(language as any),
+  statements: {
+    ...(language as any).statements,
+    rootOnlyCmd: {
+      name: "rootOnlyCmd",
+      component: "cmd",
+      label: "Root Only Cmd",
+      icon: "pi-home",
+      color: "#ffffff",
+      backgroundColor: "#99A8D7",
+      parents: ["_"],
+      extensions: { params: { type: "array", defs: "string" } }
+    }
+  }
+};
+
+describe("Root-level add-statement suggestions", () => {
+  it("includes a statement restricted to the '_' root parent", () => {
+    mountEditor(empty as unknown as Program, languageWithRootOnlyStatement as unknown as Language);
+
+    cy.get(sel.addStatementButton).click();
+    cy.get(".p-autocomplete-dropdown").click();
+    cy.contains(".p-autocomplete-item", "Root Only Cmd").should("exist");
+  });
+});
