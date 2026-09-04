@@ -213,6 +213,35 @@ describe("CmdStatement stale local-state mirror", () => {
   });
 });
 
+// Regression test for "remove(index) reused for two call signatures" (see
+// main report: CmdStatement.tsx's remove was used both as the per-param
+// remove handler and, unmodified, as the whole-statement onRemove handler —
+// which Statement.tsx calls with zero arguments — so removing one param
+// used to also (or instead) remove the entire statement).
+describe("CmdStatement per-param vs whole-statement removal", () => {
+  it("removing a param does not remove the whole statement", () => {
+    mountEditor(duplicateParams as unknown as Program);
+
+    cy.get(sel.expressionInput).should("have.length", 2);
+    cy.get(`${sel.block} ${sel.accordion}`).should("have.length", 1);
+
+    cy.get(".accordion-body .input-group .pi-times").first().click({ force: true });
+
+    cy.get(sel.expressionInput).should("have.length", 1);
+    cy.get(`${sel.block} ${sel.accordion}`).should("have.length", 1);
+  });
+
+  it("removing the whole statement still works", () => {
+    mountEditor(duplicateParams as unknown as Program);
+
+    cy.get(`${sel.block} ${sel.accordion}`).should("have.length", 1);
+
+    cy.get(sel.removeButton).click({ force: true });
+
+    cy.get(`${sel.block} ${sel.accordion}`).should("have.length", 0);
+  });
+});
+
 // Regression tests for the hardcoded, always-on GDPR/analytics consent modal
 // (see main report: no settings flag to disable it, no persistence — it
 // reappeared on every page load and analytics tracked regardless of the

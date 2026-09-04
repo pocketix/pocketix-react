@@ -49,8 +49,15 @@ const CmdStatement = (props: {
 
   const down = () => props.onDown();
 
-  const remove = (index: number) => {
-    props.onRemove();
+  const removeStatement = () => props.onRemove();
+
+  const removeParam = (index: number) => {
+    const newStatementParameters = [...statementParams];
+    newStatementParameters.splice(index, 1);
+    props.onStatementChanged({
+      ...props.statement,
+      params: newStatementParameters
+    });
   };
 
   const editStatementParam = (value: string, index: number) => {
@@ -80,7 +87,7 @@ const CmdStatement = (props: {
       isOpen={props.isOpen}
       onUp={up}
       onDown={down}
-      onRemove={remove}
+      onRemove={removeStatement}
       onOpen={props?.onOpen}
       header={
         <span>({
@@ -101,7 +108,7 @@ const CmdStatement = (props: {
                     color={(statementFromLanguage.color ?? defaultStatementLanguage.color ?? "")}
                     backgroundColor={backgroundColor}/>
                   <Button
-                    className="accordion-button" icon="pi pi-times" onClick={() => remove(index)}
+                    className="accordion-button" icon="pi pi-times" onClick={() => removeParam(index)}
                     style={{
                       margin: "1px",
                       backgroundColor: `${(statementFromLanguage.backgroundColor ?? defaultStatementLanguage.backgroundColor)}44`,
