@@ -1,5 +1,5 @@
 import {Program} from "../model/language.model";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {InputTextarea} from "primereact/inputtextarea";
 import "./TextEditor.css"
 import { captureAnalyticsEvent } from "../util/analytics";
@@ -11,8 +11,17 @@ const TextEditor = (props: { program: Program, onProgramChange: CallableFunction
 	const [syntaxError, setSyntaxError] = useState(false);
 	const [timer, setTimer] = useState(undefined as NodeJS.Timeout | undefined);
 	const [changed, setChanged] = useState(false);
+	// True while a keystroke's debounce hasn't committed yet - guards the
+	// resync effect below from clobbering in-progress typed-but-uncommitted
+	// text with an unrelated incoming props.program change (e.g. a visual
+	// editor edit landing while the user is still mid-typing).
+	const hasPendingEdit = useRef(false);
 
   useEffect(() => {
+    if (hasPendingEdit.current) {
+      return;
+    }
+
     setEditorContent(convertProgramToEditorContent(props.program))
   }, [props.program]);
 
@@ -30,13 +39,15 @@ const TextEditor = (props: { program: Program, onProgramChange: CallableFunction
 			setSyntaxError(true);
 		}
 		finally {
-			setTimer(undefined)
+			setTimer(undefined);
+			hasPendingEdit.current = false;
 		}
 	}
 
 	const onProgramChange = (change: string) => {
 		setEditorContent(change);
 		setChanged(true);
+		hasPendingEdit.current = true;
 
 		if (timer)
 			clearTimeout(timer);

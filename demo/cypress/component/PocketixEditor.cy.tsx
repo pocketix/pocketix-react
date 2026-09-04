@@ -349,3 +349,45 @@ describe("Text editor visibility setting", () => {
     cy.get(".text-editor").should("exist");
   });
 });
+
+// Regression test for "text-editor debounce race can lose in-progress edits"
+// (see main report: TextEditor.tsx's resync useEffect unconditionally
+// overwrote editorContent on any props.program change, including one
+// triggered by an unrelated visual-editor action landing during the 1s
+// debounce window after typing - discarding the uncommitted typed text).
+describe("TextEditor debounce race", () => {
+  it("does not discard in-progress typed text when a visual edit lands mid-debounce", () => {
+    const bothPanesSettings = {
+      menu: { enabled: true, enableToggleVisual: true, enableSaveVisual: true, enableUndo: true, enableRedo: true, enableSync: true, enableSaveText: true, enableToggleText: true, enableLang: true },
+      visualEditor: { enabled: true },
+      textEditor: { enabled: true, style: {} },
+      common: { manualSync: false },
+    } as EditorSettings;
+
+    cy.mount(
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={siblings as unknown as Program}
+        level={0}
+        onProgramChange={() => {}}
+        settings={bothPanesSettings}
+      />
+    );
+    cy.get(".text-area").should("exist");
+
+    // Type into the text editor - this restarts a 1000ms debounce on every
+    // keystroke, so as long as the rest of this test executes well within
+    // that window (true for Cypress's synchronous command queue here), the
+    // debounce has not committed yet at the point of the visual-editor click.
+    cy.get(".text-area").clear().type('// uncommitted edit\n', { delay: 0 });
+
+    // Trigger an unrelated visual-editor action (move the first statement
+    // down), which updates props.program from a completely different path.
+    cy.get(`${sel.block} ${sel.accordion}`).first().find(sel.moveDownButton).click({ force: true });
+
+    // The typed-but-not-yet-committed text must still be showing.
+    cy.get(".text-area").should(($el) => {
+      expect(($el.val() as string).startsWith("// uncommitted edit")).to.equal(true);
+    });
+  });
+});
