@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test-component:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      # cypress:run pins --browser chrome (the bundled Electron browser is
+      # deprecated and can hang on headless screenshot capture); install a
+      # known-good Chrome explicitly rather than relying on whatever the
+      # runner image happens to ship.
+      - uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - run: npm run install:all
+      - run: npm run test:component

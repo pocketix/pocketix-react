@@ -1,6 +1,6 @@
 import { Device } from "../generated";
-import { Statement } from "pocketix-react/dist/types/model/meta-language.model";
-import {capabilityTemplate} from "pocketix-react";
+import { Statement } from "iotix-react/dist/types/model/meta-language.model";
+import {capabilityTemplate} from "iotix-react";
 
 const createCapabilitiesFromDeviceAndCapabilityTemplate = (device: Device): (Statement & {capabilityId: string})[] => {
   const deviceName = device.deviceName.replace(/[\s-+*/.]/g, "");

@@ -1,0 +1,3 @@
+[submodule "iotix-shared-tests"]
+	path = iotix-shared-tests
+	url = https://github.com/pocketix/iotix-shared-tests.git

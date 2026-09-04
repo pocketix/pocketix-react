@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
 	"declaration": true,
+	"outDir": "dist",
 	"declarationDir": "dist/types",
 	"emitDeclarationOnly": true,
     "target": "es5",

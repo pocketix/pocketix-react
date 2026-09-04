@@ -10,6 +10,10 @@ const capabilityTemplate: Statement = {
   extensions: {
     params: {
       type: "array",
+      // A string tag here (vs iotixng's Type<T> constructor reference) is
+      // this platform's idiomatic representation - unused at runtime for
+      // "array" params on either platform (only the "structure" case reads
+      // defs), so not unified across repos.
       defs: "string"
     }
   }

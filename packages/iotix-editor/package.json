@@ -1,0 +1,59 @@
+{
+  "name": "@pocketix/iotix-react",
+  "version": "1.0.0",
+  "description": "Visual Programming Editor Aimed at IoT and Smart Device Automation",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/types/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "scripts": {
+    "build": "rollup -c --configPlugin @rollup/plugin-typescript",
+    "postinstall": "npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pocketix/iotix-react.git"
+  },
+  "keywords": [
+    "VPL",
+    "IoT"
+  ],
+  "author": "Petr John",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pocketix/iotix-react/issues"
+  },
+  "homepage": "https://github.com/pocketix/iotix-react#readme",
+  "dependencies": {
+    "@rollup/plugin-commonjs": "^29.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "eslint": "^8.57.1",
+    "eslint-plugin-node": "^11.1.0",
+    "jsep": "^1.4.0",
+    "posthog-js": "^1.427.2",
+    "primeicons": "^6.0.1",
+    "primereact": "^10.5.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-scripts": "5.0.1",
+    "rollup": "^4.63.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "typescript": "^6.0.3",
+    "web-vitals": "^6.2.1"
+  },
+  "devDependencies": {
+    "@types/rollup-plugin-peer-deps-external": "^2.2.6",
+    "rollup-plugin-postcss": "^4.0.2"
+  }
+}

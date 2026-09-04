@@ -1,9 +1,11 @@
+import { readFileSync } from "node:fs";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import postcss from 'rollup-plugin-postcss';
-import pkg from "./package.json";
+
+const pkg = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf-8"));
 
 export default {
     input: "src/index.tsx",

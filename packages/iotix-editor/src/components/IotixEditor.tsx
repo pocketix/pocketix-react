@@ -4,7 +4,7 @@ import { Program as ProgramModel, Block as BlockModel } from "../model/language.
 import { Language } from "../model/meta-language.model";
 import { TextEditor } from "./TextEditor";
 import "./Program.css";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { EditorSettings, TextEditorSettings, VisualEditorSettings } from "../model/editor-settings.model";
 import { defaultSettings } from "../util/defaultSettings";
 import { generateIds, removeIds } from "../util/makeId";
@@ -12,10 +12,10 @@ import { preventDefaults } from "../util/preventDefaults";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Dialog } from "primereact/dialog";
 import { PrimeReactProvider } from "primereact/api";
-import posthog from "posthog-js";
-import { time } from "console";
+import { captureAnalyticsEvent, setAnalyticsConsent } from "../util/analytics";
+import { hasStoredConsent, storeConsent } from "../util/analyticsConsent";
 
-const PocketixEditor = (props: {
+const IotixEditor = (props: {
   program: ProgramModel,
   language: Language,
   level: number,
@@ -30,7 +30,7 @@ const PocketixEditor = (props: {
   const [language, setLanguage] = useState(props.language);
 
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [isAgreeVisible, setIsAgreeVisible] = useState(true);
+  const [hasConsented, setHasConsented] = useState(() => hasStoredConsent());
   const [languageString, setLanguageString] = useState(JSON.stringify(language, null, 2));
   const [languageSyntaxError, setLanguageSyntaxError] = useState(false);
   const [timer, setTimer] = useState(undefined as NodeJS.Timeout | undefined);
@@ -40,16 +40,58 @@ const PocketixEditor = (props: {
 
   const [mobileClosedVisualEditor, setMobileClosedVisualEditor] = useState(false);
 
-  const [settings, setSettings] = useState(() => {
-    const baseSettings = props?.settings ?? defaultSettings;
-    return {
-      ...baseSettings,
-      textEditor: {
-        ...baseSettings.textEditor,
-        enabled: false
+  const [settings, setSettings] = useState(() => props?.settings ?? defaultSettings);
+
+  const analyticsEnabled = settings.analytics?.enabled ?? false;
+  const isAgreeVisible = analyticsEnabled && !hasConsented;
+
+  useEffect(() => {
+    setAnalyticsConsent(analyticsEnabled && hasConsented);
+  }, [analyticsEnabled, hasConsented]);
+
+  const previousSettingsProp = useRef(props.settings);
+  const previousProgramProp = useRef(props.program);
+
+  useEffect(() => {
+    // Compare the raw incoming prop against the raw prop we last processed -
+    // NOT a freshly regenerated-ids version against the (already id-ful)
+    // local state. generateIds() assigns new random ids to any id-less node
+    // on every call, so comparing two independently-regenerated versions of
+    // an id-less program would almost always "differ" even though
+    // props.program itself never changed, causing a spurious resync/remount
+    // shortly after every mount.
+    if (JSON.stringify(props.program) === JSON.stringify(previousProgramProp.current)) {
+      return;
+    }
+
+    previousProgramProp.current = props.program;
+
+    const incomingProgram = generateIds(props.program);
+    setProgram(incomingProgram);
+    setVisualProgram(incomingProgram);
+    setTextProgram(props.program);
+  }, [props.program]);
+
+  useEffect(() => {
+    setLanguage(props.language);
+  }, [props.language]);
+
+  useEffect(() => {
+    if (JSON.stringify(props.settings) === JSON.stringify(previousSettingsProp.current)) {
+      return;
+    }
+
+    previousSettingsProp.current = props.settings;
+    setSettings(props.settings ?? defaultSettings);
+  }, [props.settings]);
+
+  useEffect(() => {
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
       }
     };
-  });
+  }, [timer]);
 
   const onEnableToggleVisual = () => {
     const visualEditorSettings = {
@@ -84,7 +126,7 @@ const PocketixEditor = (props: {
       }
     });
 
-    posthog.capture('toggled_manual_sync', {
+    captureAnalyticsEvent('toggled_manual_sync', {
       enabled: !settings.common.manualSync,
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'
@@ -92,7 +134,11 @@ const PocketixEditor = (props: {
   };
 
   const undo = () => {
-    posthog.capture('undo_action', {
+    if (undoList.length === 0) {
+      return;
+    }
+
+    captureAnalyticsEvent('undo_action', {
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'
     });
@@ -105,7 +151,11 @@ const PocketixEditor = (props: {
   };
 
   const redo = () => {
-    posthog.capture('redo_action', {
+    if (redoList.length === 0) {
+      return;
+    }
+
+    captureAnalyticsEvent('redo_action', {
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'
     });
@@ -118,11 +168,13 @@ const PocketixEditor = (props: {
   };
 
   const handleAgreeClose = () => {
-    posthog.capture('data_analysis_agreed', {
+    storeConsent();
+    setAnalyticsConsent(true);
+    captureAnalyticsEvent('data_analysis_agreed', {
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'
     });
-    setIsAgreeVisible(false);
+    setHasConsented(true);
   };
 
   const updateProgram = (newProgramRaw: ProgramModel) => {
@@ -158,7 +210,11 @@ const PocketixEditor = (props: {
     setProgram(newProgram);
     setVisualProgram(newProgram);
     setTextProgram(removeIds(newProgram));
-    props.onProgramChange(newProgram);
+    // Ids are internal React-key bookkeeping, generated fresh from an
+    // id-less props.program on every mount/resync (see the resync effect
+    // above) - the host never supplied them and shouldn't receive them
+    // back, so this must match textProgram's id-stripped view.
+    props.onProgramChange(removeIds(newProgram));
   }
 
   const header = <span>Language</span>;
@@ -257,30 +313,31 @@ const PocketixEditor = (props: {
                        onChange={(e) => updateLanguageAndTriggerCheck(e.target.value)} rows={5} cols={30}/>
       </Dialog>
 
-      <Dialog 
-        header="Souhlas se zpracováním dat"
-        visible={isAgreeVisible}
-        style={{ width: '550px' }}
-        modal
-        onHide={() => {}}
-        contentStyle={{ padding: '1.5rem 2rem'}}
-        closable={false} 
-        draggable={false}
-        resizable={false}
-        footer={
-          <div>
-            <Button label="Souhlasím" icon="pi pi-check" onClick={handleAgreeClose} autoFocus />
-          </div>
-        }
-      >
-        <p className="m-0">
-          Souhlasím se zpracováním údajů o mém pohybu na stránce pro účely analytiky a vylepšení aplikace.
-          <br /><br />
-          Veškerá data jsou anonymizována a slouží pouze k technickému zdokonalení nástroje.
-        </p>
-      </Dialog>
+      {analyticsEnabled ?
+        <Dialog
+          header="Souhlas se zpracováním dat"
+          visible={isAgreeVisible}
+          style={{ width: '550px' }}
+          modal
+          onHide={() => {}}
+          contentStyle={{ padding: '1.5rem 2rem'}}
+          closable={false}
+          draggable={false}
+          resizable={false}
+          footer={
+            <div>
+              <Button label="Souhlasím" icon="pi pi-check" onClick={handleAgreeClose} autoFocus />
+            </div>
+          }
+        >
+          <p className="m-0">
+            Souhlasím se zpracováním údajů o mém pohybu na stránce pro účely analytiky a vylepšení aplikace.
+            <br /><br />
+            Veškerá data jsou anonymizována a slouží pouze k technickému zdokonalení nástroje.
+          </p>
+        </Dialog> : <></>}
     </PrimeReactProvider>
   );
 };
 
-export { PocketixEditor };
+export { IotixEditor };

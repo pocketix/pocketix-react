@@ -13,7 +13,8 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { useEffect, useState } from "react";
 import { AutoComplete } from "primereact/autocomplete";
-import posthog from "posthog-js";
+import { captureAnalyticsEvent } from "../util/analytics";
+import { generateRandomId } from "../util/makeId";
 
 const Block = (props: {
   block: LanguageBlock,
@@ -36,20 +37,14 @@ const Block = (props: {
   }, [props.block]);
 
   const searchSuggestions = (query: string) => {
-    const suggestions: StatementModel[] = [];
-
-    Object.entries(props.language.statements).forEach(([key, val]) => {
-      if ((!val.levels || val.levels.includes(props.level)) &&
+    const suggestions = Object.entries(props.language.statements)
+      .filter(([key, val]) => (!val.levels || val.levels.includes(props.level)) &&
         (!val.avoidLevels || !val.avoidLevels.includes(props.level)) &&
-        (!val.parents || val.parents.includes(props.parent?.name as string)) &&
-        (!val.avoidParents || !val.avoidParents.includes(props.parent?.name as string)) && key.startsWith(query)) {
-        suggestions.push({
-          ...val
-        });
-      }
+        (!val.parents || val.parents.includes(parent.name)) &&
+        (!val.avoidParents || !val.avoidParents.includes(parent.name)) && key.startsWith(query))
+      .map(([, val]) => ({...val}));
 
-      setRecommendedStatements(suggestions);
-    });
+    setRecommendedStatements(suggestions);
   };
 
   const add = () => {
@@ -58,6 +53,7 @@ const Block = (props: {
     }
 
     const newBlock = [...block, {
+      id: generateRandomId(),
       name: selectedItem.name || "",
       condition: undefined,
       params: [],
@@ -67,7 +63,7 @@ const Block = (props: {
 
     props.onUpdate(newBlock);
 
-    posthog.capture('added_statement', {
+    captureAnalyticsEvent('added_statement', {
       statement: selectedItem.name,
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'
@@ -88,7 +84,7 @@ const Block = (props: {
     setBlock(blockNextState);
     props.onUpdate(blockNextState);
 
-    posthog.capture('moved_statement', {
+    captureAnalyticsEvent('moved_statement', {
       movement: direction === 1 ? 'moved_down' : 'moved_up',
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'
@@ -96,7 +92,7 @@ const Block = (props: {
   };
 
   const remove = (index: number) => {
-    posthog.capture('removed_statement', {
+    captureAnalyticsEvent('removed_statement', {
       type: block[index].name,
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'
@@ -163,9 +159,9 @@ const Block = (props: {
                             key={statement.id} />;
         })}
         <Button  icon="pi pi-plus" onClick={() => setDialogVisible(true)} style={{
-          backgroundColor: props.language.statements[parent.name].backgroundColor,
-          borderColor: props.language.statements[parent.name].color,
-          color: props.language.statements[parent.name].color
+          backgroundColor: props.language.statements[parent.name]?.backgroundColor ?? props.language.err.backgroundColor,
+          borderColor: props.language.statements[parent.name]?.color ?? props.language.err.color,
+          color: props.language.statements[parent.name]?.color ?? props.language.err.color
         }} />
       </div>
       <Dialog onHide={() => {

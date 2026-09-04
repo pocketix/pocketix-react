@@ -7,20 +7,19 @@ import "primeicons/primeicons.css";
 import { OpenAPI, ProgramService } from "../generated";
 import { defaultProgram } from "../util/defaultProgram";
 import { defaultMetaLanguage } from "../util/defaultMetaLanguage";
-import { Program as ProgramModel } from "pocketix-react/dist/types/model/language.model";
-import { Statement, Variable } from "pocketix-react/dist/types/model/meta-language.model";
+import { Program as ProgramModel } from "iotix-react/dist/types/model/language.model";
+import { Statement, Variable } from "iotix-react/dist/types/model/meta-language.model";
 import { Button } from "primereact/button";
 import {
   readableToSerializedCapabilityAndVariablesReplacer,
   serializedToReadableCapabilityAndVariablesReplacer
 } from "../util/capabilityAndVariablesReplacers";
 import { Toast } from "primereact/toast";
-import {PocketixEditor} from "pocketix-react";
+import {IotixEditor} from "iotix-react";
 
 const getCurrentBaseUrl = () => {
   const fullUrl = window.location.href as string;
 
-  // eslint-disable-next-line node/no-unsupported-features/node-builtins
   const url = new URL(fullUrl);
 
   if (process.env.REACT_BACKEND_URL) {
@@ -72,12 +71,12 @@ function App() {
       <Toast ref={toast} position="bottom-center"/>
       <div className="heading-content">
         <h1>
-          Pocketix React
+          IoTiX React
         </h1>
         <More onProgramChange={setProgram} onMetaLanguageChange={setMetaLanguage} onCapabilitiesChange={setCapabilities}
               onVariablesChange={setVariables} />
       </div>
-      <PocketixEditor language={metaLanguage}
+      <IotixEditor language={metaLanguage}
                       program={program}
                       level={0}
                       onProgramChange={(changedProgram: ProgramModel) => {

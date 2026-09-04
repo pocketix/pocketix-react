@@ -4,7 +4,6 @@ import { AbstractStatement as AbstractStatementModel, Command } from "../model/l
 import "./CmdStatement.css";
 import { Button } from "primereact/button";
 import { Expression } from "./Expression";
-import { useState } from "react";
 import { checkPosition } from "../util/checkPosition";
 
 const defaultStatementLanguage: Statement = {
@@ -40,8 +39,7 @@ const CmdStatement = (props: {
   const params = statementFromLanguage?.extensions?.params;
   const correctPosition = checkPosition(props.position, props.blockLength, props.language, props.statement, props.parent, props.level);
   const updating = false;
-
-  const [statementParams, setStatementParams] = useState(props.statement.params);
+  const statementParams = props.statement.params;
 
   const backgroundColor = (correctPosition) ?
     (updating ? "#00AA00" : (statementFromLanguage?.backgroundColor ?? defaultStatementLanguage.backgroundColor ?? "")) :
@@ -51,17 +49,20 @@ const CmdStatement = (props: {
 
   const down = () => props.onDown();
 
-  const remove = (index: number) => {
+  const removeStatement = () => props.onRemove();
+
+  const removeParam = (index: number) => {
     const newStatementParameters = [...statementParams];
     newStatementParameters.splice(index, 1);
-    setStatementParams(newStatementParameters);
-    props.onRemove();
+    props.onStatementChanged({
+      ...props.statement,
+      params: newStatementParameters
+    });
   };
 
   const editStatementParam = (value: string, index: number) => {
     const newStatementParameters = [...statementParams];
     newStatementParameters[index] = value;
-    setStatementParams(newStatementParameters);
     props.onStatementChanged({
       ...props.statement,
       params: newStatementParameters
@@ -70,7 +71,6 @@ const CmdStatement = (props: {
 
   const add = () => {
     const newStatementParameters = [...statementParams, " "];
-    setStatementParams(newStatementParameters);
     props.onStatementChanged({
       ...props.statement,
       params: newStatementParameters
@@ -87,12 +87,12 @@ const CmdStatement = (props: {
       isOpen={props.isOpen}
       onUp={up}
       onDown={down}
-      onRemove={remove}
+      onRemove={removeStatement}
       onOpen={props?.onOpen}
       header={
         <span>({
           statementParams.map((parameter, index) => <span
-            key={parameter}>{(index ? ", " : "") + parameter}</span>)
+            key={index}>{(index ? ", " : "") + parameter}</span>)
         })</span>
       }
       body={
@@ -100,7 +100,7 @@ const CmdStatement = (props: {
           <>
             {
               statementParams.map((parameter, index) =>
-                <div key={parameter} className="input-group">
+                <div key={index} className="input-group">
                   <Expression
                     language={props.language} expressionValue={parameter}
                     blockType={props.statement.name}
@@ -108,7 +108,7 @@ const CmdStatement = (props: {
                     color={(statementFromLanguage.color ?? defaultStatementLanguage.color ?? "")}
                     backgroundColor={backgroundColor}/>
                   <Button
-                    className="accordion-button" icon="pi pi-times" onClick={() => remove(index)}
+                    className="accordion-button" icon="pi pi-times" onClick={() => removeParam(index)}
                     style={{
                       margin: "1px",
                       backgroundColor: `${(statementFromLanguage.backgroundColor ?? defaultStatementLanguage.backgroundColor)}44`,
@@ -129,13 +129,22 @@ const CmdStatement = (props: {
               />
             </div>
           </> :
-          <div className="input-group">
-            {
-              (statementFromLanguage?.extensions?.params?.defs as any).map((parameter: {
-                name: string | undefined;
-              }) => <input key={JSON.stringify(parameter)} value={parameter.name} />)
-            }
-          </div>
+          params && params?.type === "structure" ?
+            <>
+              {
+                (params.defs as { name: string }[]).map((fieldDef, index) =>
+                  <div key={fieldDef.name} className="input-group">
+                    <span>{fieldDef.name}</span>
+                    <Expression
+                      language={props.language} expressionValue={statementParams[index]}
+                      blockType={props.statement.name}
+                      onExpressionValueChanged={(value: string) => editStatementParam(value, index)}
+                      color={(statementFromLanguage?.color ?? defaultStatementLanguage.color ?? "")}
+                      backgroundColor={backgroundColor}/>
+                  </div>)
+              }
+            </> :
+            <></>
       }
     />
   );

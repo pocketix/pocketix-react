@@ -19,7 +19,7 @@ const Statement = (props: {
   onRemove: CallableFunction;
   onOpen?: CallableFunction;
 }) => {
-	const [isOpen, setIsOpen] = useState((props.isOpen || true) as boolean);
+	const [isOpen, setIsOpen] = useState(props.isOpen ?? true);
 
 	const toggleAccordion = () => {
 		setIsOpen(!isOpen);
@@ -105,7 +105,7 @@ const Statement = (props: {
 			<div
 				className={`accordion-body ${isOpen ? "open" : "closed"}`}
 				style={{
-					paddingLeft: `${props.bodyPadding}px`,
+					paddingLeft: `${props.bodyPadding ?? 20}px`,
 					backgroundColor: `${props.backgroundColor}`,
 				}}
 			>
