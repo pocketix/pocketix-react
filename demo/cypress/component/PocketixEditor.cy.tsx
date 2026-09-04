@@ -458,3 +458,49 @@ describe("Root-level add-statement suggestions", () => {
     cy.contains(".p-autocomplete-item", "Root Only Cmd").should("exist");
   });
 });
+
+// Regression test for "id-bearing vs id-stripped program view asymmetry"
+// (see main report: onProgramChange received the id-bearing program while
+// the text editor's own view of the same program has ids stripped -
+// PocketixEditor.tsx generates ids purely as an internal React-key
+// concern from an id-less props.program on every mount, and the host never
+// supplied them, so they should never be handed back either).
+function hasAnyId(node: unknown): boolean {
+  if (Array.isArray(node)) {
+    return node.some(hasAnyId);
+  }
+
+  if (node && typeof node === "object") {
+    if ("id" in (node as Record<string, unknown>) && (node as Record<string, unknown>).id !== undefined) {
+      return true;
+    }
+
+    return Object.values(node as Record<string, unknown>).some(hasAnyId);
+  }
+
+  return false;
+}
+
+describe("onProgramChange id stripping", () => {
+  it("emits a program with no id fields after a visual edit", () => {
+    const onProgramChange = cy.stub().as("onProgramChange");
+
+    cy.mount(
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={siblings as unknown as Program}
+        level={0}
+        onProgramChange={onProgramChange}
+        settings={{ visualEditor: { enabled: true }, common: { manualSync: false } } as EditorSettings}
+      />
+    );
+
+    cy.get(`${sel.block} ${sel.accordion}`).first().find(sel.moveDownButton).click({ force: true });
+
+    cy.get("@onProgramChange").should("have.been.called");
+    cy.get("@onProgramChange").then((stub: any) => {
+      const emitted = stub.lastCall.args[0];
+      expect(hasAnyId(emitted), `emitted program: ${JSON.stringify(emitted)}`).to.equal(false);
+    });
+  });
+});

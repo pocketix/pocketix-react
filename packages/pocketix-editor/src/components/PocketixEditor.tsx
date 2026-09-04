@@ -202,7 +202,11 @@ const PocketixEditor = (props: {
     setProgram(newProgram);
     setVisualProgram(newProgram);
     setTextProgram(removeIds(newProgram));
-    props.onProgramChange(newProgram);
+    // Ids are internal React-key bookkeeping, generated fresh from an
+    // id-less props.program on every mount/resync (see the resync effect
+    // above) - the host never supplied them and shouldn't receive them
+    // back, so this must match textProgram's id-stripped view.
+    props.onProgramChange(removeIds(newProgram));
   }
 
   const header = <span>Language</span>;
