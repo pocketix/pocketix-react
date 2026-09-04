@@ -33,9 +33,11 @@ const More = (props: {
 
   const [selectedGroup, setSelectedGroup] = useState(undefined as undefined | Group);
   const [groups, setGroups] = useState([] as Group[]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [groupsError, setGroupsError] = useState("");
 
   const [groupById, setGroupById] = useState(null as null | Group);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [groupsByIdError, setGroupsByIdError] = useState("");
 
   const [programs, setPrograms] = useState([] as Program[]);
@@ -91,6 +93,7 @@ const More = (props: {
     };
 
     fetchGroup();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedGroup]);
 
   useEffect(() => {
@@ -112,6 +115,7 @@ const More = (props: {
     };
 
     fetchPrograms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupById]);
 
   useEffect(() => {
@@ -135,6 +139,7 @@ const More = (props: {
     };
 
     fetchMetaLanguage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProgramIndex]);
 
   const setActiveProgram = (index: number) => {

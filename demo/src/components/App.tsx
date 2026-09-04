@@ -20,7 +20,6 @@ import {IotixEditor} from "iotix-react";
 const getCurrentBaseUrl = () => {
   const fullUrl = window.location.href as string;
 
-  // eslint-disable-next-line node/no-unsupported-features/node-builtins
   const url = new URL(fullUrl);
 
   if (process.env.REACT_BACKEND_URL) {
