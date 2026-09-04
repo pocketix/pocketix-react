@@ -14,7 +14,6 @@ import { Dialog } from "primereact/dialog";
 import { PrimeReactProvider } from "primereact/api";
 import { captureAnalyticsEvent, setAnalyticsConsent } from "../util/analytics";
 import { hasStoredConsent, storeConsent } from "../util/analyticsConsent";
-import { time } from "console";
 
 const PocketixEditor = (props: {
   program: ProgramModel,
