@@ -36,3 +36,20 @@ describe("Statement isOpen default", () => {
     cy.get(".accordion-body").should("have.class", "open");
   });
 });
+
+// Regression test for "bodyPadding prop never passed by any caller" (see
+// main report: no caller supplies bodyPadding, and without a default,
+// `paddingLeft: \`${props.bodyPadding}px\`` computed the invalid CSS value
+// "undefinedpx" - silently dropped by the browser instead of applying any
+// left padding at all).
+describe("Statement bodyPadding default", () => {
+  it("applies a sensible default left padding when bodyPadding is not passed", () => {
+    cy.mount(<Statement {...baseProps()} />);
+    cy.get(".accordion-body").should("have.css", "padding-left", "20px");
+  });
+
+  it("respects an explicitly passed bodyPadding", () => {
+    cy.mount(<Statement {...baseProps({ bodyPadding: "40" })} />);
+    cy.get(".accordion-body").should("have.css", "padding-left", "40px");
+  });
+});

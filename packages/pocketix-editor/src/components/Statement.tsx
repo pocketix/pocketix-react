@@ -105,7 +105,7 @@ const Statement = (props: {
 			<div
 				className={`accordion-body ${isOpen ? "open" : "closed"}`}
 				style={{
-					paddingLeft: `${props.bodyPadding}px`,
+					paddingLeft: `${props.bodyPadding ?? 20}px`,
 					backgroundColor: `${props.backgroundColor}`,
 				}}
 			>
