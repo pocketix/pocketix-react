@@ -4,16 +4,16 @@ import type { Program } from "iotix-react/dist/types/model/language.model";
 import type { Language } from "iotix-react/dist/types/model/meta-language.model";
 import type { EditorSettings } from "iotix-react/dist/types/model/editor-settings.model";
 
-import language from "../../../../iotix-shared-tests/fixtures/language.json";
-import languageMissingRoot from "../../../../iotix-shared-tests/fixtures/language-missing-root.json";
-import siblings from "../../../../iotix-shared-tests/fixtures/programs/siblings.json";
-import duplicateParams from "../../../../iotix-shared-tests/fixtures/programs/duplicateParams.json";
-import structureParams from "../../../../iotix-shared-tests/fixtures/programs/structureParams.json";
-import empty from "../../../../iotix-shared-tests/fixtures/programs/empty.json";
+import language from "../../../iotix-shared-tests/fixtures/language.json";
+import languageMissingRoot from "../../../iotix-shared-tests/fixtures/language-missing-root.json";
+import siblings from "../../../iotix-shared-tests/fixtures/programs/siblings.json";
+import duplicateParams from "../../../iotix-shared-tests/fixtures/programs/duplicateParams.json";
+import structureParams from "../../../iotix-shared-tests/fixtures/programs/structureParams.json";
+import empty from "../../../iotix-shared-tests/fixtures/programs/empty.json";
 
 // Shared, framework-agnostic assertions — see iotix-shared-tests/README.md
-import * as selectorsModule from "../../../../iotix-shared-tests/scenarios/selectors";
-import * as scenarios from "../../../../iotix-shared-tests/scenarios/sharedScenarios";
+import * as selectorsModule from "../../../iotix-shared-tests/scenarios/selectors";
+import * as scenarios from "../../../iotix-shared-tests/scenarios/sharedScenarios";
 
 const { common, perRepo } = selectorsModule as unknown as {
   common: Record<string, string>;

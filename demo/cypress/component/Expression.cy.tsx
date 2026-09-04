@@ -1,5 +1,5 @@
 import { Expression } from "../../../packages/iotix-editor/src/components/Expression";
-import language from "../../../../iotix-shared-tests/fixtures/language.json";
+import language from "../../../iotix-shared-tests/fixtures/language.json";
 
 // Regression test for "checkExpression()/syntaxError is a no-op" (see main
 // report: `const [syntaxError] = useState(false)` had no setter, so the

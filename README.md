@@ -18,8 +18,12 @@ To get started with `iotix-react`, you’ll need [Node.js](https://nodejs.org/en
 
 ### Step 1: Clone the Repository
 
+The `iotix-shared-tests` fixtures/scenarios used by the Cypress test suite are
+a git submodule — clone with `--recurse-submodules`, or run
+`git submodule update --init` afterwards if you already cloned without it.
+
 ```bash
-git clone https://github.com/pocketix/iotix-react.git  
+git clone --recurse-submodules https://github.com/pocketix/iotix-react.git  
 cd iotix-react
 ```
 
