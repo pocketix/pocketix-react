@@ -41,16 +41,7 @@ const PocketixEditor = (props: {
 
   const [mobileClosedVisualEditor, setMobileClosedVisualEditor] = useState(false);
 
-  const [settings, setSettings] = useState(() => {
-    const baseSettings = props?.settings ?? defaultSettings;
-    return {
-      ...baseSettings,
-      textEditor: {
-        ...baseSettings.textEditor,
-        enabled: false
-      }
-    };
-  });
+  const [settings, setSettings] = useState(() => props?.settings ?? defaultSettings);
 
   const analyticsEnabled = settings.analytics?.enabled ?? false;
   const isAgreeVisible = analyticsEnabled && !hasConsented;
@@ -92,15 +83,7 @@ const PocketixEditor = (props: {
     }
 
     previousSettingsProp.current = props.settings;
-
-    const baseSettings = props.settings ?? defaultSettings;
-    setSettings({
-      ...baseSettings,
-      textEditor: {
-        ...baseSettings.textEditor,
-        enabled: false
-      }
-    });
+    setSettings(props.settings ?? defaultSettings);
   }, [props.settings]);
 
   const onEnableToggleVisual = () => {

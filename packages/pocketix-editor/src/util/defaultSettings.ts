@@ -16,7 +16,7 @@ const defaultSettings = {
 		enabled: true,
 	},
 	textEditor: {
-		enabled: true,
+		enabled: false,
 		style: {},
 	},
 	analytics: {

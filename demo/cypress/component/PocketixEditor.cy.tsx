@@ -269,3 +269,28 @@ describe("Analytics consent", () => {
     cy.get(".p-dialog-mask").should("not.exist");
   });
 });
+
+// Regression tests for the "defaultSettings.textEditor.enabled is unreachable"
+// bug (see main report: PocketixEditor.tsx used to force textEditor.enabled
+// to false at mount/resync regardless of what props.settings/defaultSettings
+// said, so a consumer explicitly requesting the text editor visible on load
+// could never get it).
+describe("Text editor visibility setting", () => {
+  it("hides the text editor by default when no settings are passed", () => {
+    mountEditor(siblings as unknown as Program);
+    cy.get(".text-editor").should("not.exist");
+  });
+
+  it("shows the text editor when explicitly enabled via settings", () => {
+    cy.mount(
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={siblings as unknown as Program}
+        level={0}
+        onProgramChange={() => {}}
+        settings={{ textEditor: { enabled: true, style: {} }, common: { manualSync: false } } as EditorSettings}
+      />
+    );
+    cy.get(".text-editor").should("exist");
+  });
+});
