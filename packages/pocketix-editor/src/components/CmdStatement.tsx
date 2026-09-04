@@ -122,13 +122,22 @@ const CmdStatement = (props: {
               />
             </div>
           </> :
-          <div className="input-group">
-            {
-              (statementFromLanguage?.extensions?.params?.defs as any).map((parameter: {
-                name: string | undefined;
-              }) => <input key={JSON.stringify(parameter)} value={parameter.name} />)
-            }
-          </div>
+          params && params?.type === "structure" ?
+            <>
+              {
+                (params.defs as { name: string }[]).map((fieldDef, index) =>
+                  <div key={fieldDef.name} className="input-group">
+                    <span>{fieldDef.name}</span>
+                    <Expression
+                      language={props.language} expressionValue={statementParams[index]}
+                      blockType={props.statement.name}
+                      onExpressionValueChanged={(value: string) => editStatementParam(value, index)}
+                      color={(statementFromLanguage?.color ?? defaultStatementLanguage.color ?? "")}
+                      backgroundColor={backgroundColor}/>
+                  </div>)
+              }
+            </> :
+            <></>
       }
     />
   );
