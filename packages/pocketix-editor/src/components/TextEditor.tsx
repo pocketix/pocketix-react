@@ -25,6 +25,14 @@ const TextEditor = (props: { program: Program, onProgramChange: CallableFunction
     setEditorContent(convertProgramToEditorContent(props.program))
   }, [props.program]);
 
+  useEffect(() => {
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [timer]);
+
 	const timerHandler = (blockAsString: string) => {
 		try {
 			const block = JSON.parse(blockAsString);

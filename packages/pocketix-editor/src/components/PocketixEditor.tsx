@@ -86,6 +86,14 @@ const PocketixEditor = (props: {
     setSettings(props.settings ?? defaultSettings);
   }, [props.settings]);
 
+  useEffect(() => {
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [timer]);
+
   const onEnableToggleVisual = () => {
     const visualEditorSettings = {
       ...settings.visualEditor,
