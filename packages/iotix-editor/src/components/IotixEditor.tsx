@@ -15,7 +15,7 @@ import { PrimeReactProvider } from "primereact/api";
 import { captureAnalyticsEvent, setAnalyticsConsent } from "../util/analytics";
 import { hasStoredConsent, storeConsent } from "../util/analyticsConsent";
 
-const PocketixEditor = (props: {
+const IotixEditor = (props: {
   program: ProgramModel,
   language: Language,
   level: number,
@@ -340,4 +340,4 @@ const PocketixEditor = (props: {
   );
 };
 
-export { PocketixEditor };
+export { IotixEditor };

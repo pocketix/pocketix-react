@@ -9,7 +9,7 @@ import {
   createCapabilitiesFromDeviceAndCapabilityTemplate
 } from "../util/createCapabilitiesFromDeviceAndCapabilityTemplate";
 import { Group, GroupService, Program, ProgramService, Version } from "../generated";
-import { Language, Statement, Variable } from "pocketix-react/dist/types/model/meta-language.model";
+import { Language, Statement, Variable } from "iotix-react/dist/types/model/meta-language.model";
 import {serializedToReadableCapabilityAndVariablesReplacer} from "../util/capabilityAndVariablesReplacers";
 import {preventDefaults} from "../util/preventDefaults";
 
@@ -177,7 +177,7 @@ const More = (props: {
         className="fullscreen-modal"
       >
         <div className="heading-content">
-          <h1>About Pocketix React</h1>
+          <h1>About IoTiX React</h1>
           <Button icon="pi pi-angle-double-right" onClick={hideDialog} />
         </div>
 
@@ -330,7 +330,7 @@ const More = (props: {
           </AccordionTab>
           <AccordionTab header="About">
               <p className="m-0">
-                  Pocketix is a block and form based visual programming language and editor currently being developed
+                  IoTiX is a block and form based visual programming language and editor currently being developed
                   by <a href="https://www.fit.vut.cz/person/ijohn/.en">Petr John</a> (<a
                   href="mailto:ijohn@fit.vut.cz">ijohn@fit.vut.cz</a>) and <a
                   href="https://www.fit.vut.cz/person/hynek/.en">Jiří Hynek

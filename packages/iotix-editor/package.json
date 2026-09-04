@@ -1,5 +1,5 @@
 {
-  "name": "@pocketix/pocketix-react",
+  "name": "@pocketix/iotix-react",
   "version": "1.0.0",
   "description": "Visual Programming Editor Aimed at IoT and Smart Device Automation",
   "main": "dist/index.cjs.js",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pocketix/pocketix-react.git"
+    "url": "git+https://github.com/pocketix/iotix-react.git"
   },
   "keywords": [
     "VPL",
@@ -24,9 +24,9 @@
   "author": "Petr John",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pocketix/pocketix-react/issues"
+    "url": "https://github.com/pocketix/iotix-react/issues"
   },
-  "homepage": "https://github.com/pocketix/pocketix-react#readme",
+  "homepage": "https://github.com/pocketix/iotix-react#readme",
   "dependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-node-resolve": "^16.0.1",

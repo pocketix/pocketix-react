@@ -1,10 +1,10 @@
-import { Statement } from "../../../packages/pocketix-editor/src/components/Statement";
+import { Statement } from "../../../packages/iotix-editor/src/components/Statement";
 
 // Regression test for "Statement.tsx's isOpen default can never be false"
 // (see main report: useState((props.isOpen || true) as boolean) - `X || true`
 // is always true regardless of X). Nothing currently passes isOpen={false}
 // (latent bug), so this mounts the component directly rather than through
-// the public PocketixEditor tree.
+// the public IotixEditor tree.
 function baseProps(overrides: Partial<Parameters<typeof Statement>[0]> = {}) {
   return {
     error: "",

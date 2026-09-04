@@ -9,6 +9,8 @@ node_modules
 
 # testing
 /coverage
+demo/coverage
+packages/*/coverage
 
 # production
 build

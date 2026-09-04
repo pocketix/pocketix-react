@@ -1,19 +1,19 @@
 import { useState } from "react";
-import { PocketixEditor } from "pocketix-react";
-import type { Program } from "pocketix-react/dist/types/model/language.model";
-import type { Language } from "pocketix-react/dist/types/model/meta-language.model";
-import type { EditorSettings } from "pocketix-react/dist/types/model/editor-settings.model";
+import { IotixEditor } from "iotix-react";
+import type { Program } from "iotix-react/dist/types/model/language.model";
+import type { Language } from "iotix-react/dist/types/model/meta-language.model";
+import type { EditorSettings } from "iotix-react/dist/types/model/editor-settings.model";
 
-import language from "../../../../pocketix-vpl-shared-tests/fixtures/language.json";
-import languageMissingRoot from "../../../../pocketix-vpl-shared-tests/fixtures/language-missing-root.json";
-import siblings from "../../../../pocketix-vpl-shared-tests/fixtures/programs/siblings.json";
-import duplicateParams from "../../../../pocketix-vpl-shared-tests/fixtures/programs/duplicateParams.json";
-import structureParams from "../../../../pocketix-vpl-shared-tests/fixtures/programs/structureParams.json";
-import empty from "../../../../pocketix-vpl-shared-tests/fixtures/programs/empty.json";
+import language from "../../../../iotix-shared-tests/fixtures/language.json";
+import languageMissingRoot from "../../../../iotix-shared-tests/fixtures/language-missing-root.json";
+import siblings from "../../../../iotix-shared-tests/fixtures/programs/siblings.json";
+import duplicateParams from "../../../../iotix-shared-tests/fixtures/programs/duplicateParams.json";
+import structureParams from "../../../../iotix-shared-tests/fixtures/programs/structureParams.json";
+import empty from "../../../../iotix-shared-tests/fixtures/programs/empty.json";
 
-// Shared, framework-agnostic assertions — see pocketix-vpl-shared-tests/README.md
-import * as selectorsModule from "../../../../pocketix-vpl-shared-tests/scenarios/selectors";
-import * as scenarios from "../../../../pocketix-vpl-shared-tests/scenarios/sharedScenarios";
+// Shared, framework-agnostic assertions — see iotix-shared-tests/README.md
+import * as selectorsModule from "../../../../iotix-shared-tests/scenarios/selectors";
+import * as scenarios from "../../../../iotix-shared-tests/scenarios/sharedScenarios";
 
 const { common, perRepo } = selectorsModule as unknown as {
   common: Record<string, string>;
@@ -24,7 +24,7 @@ const sel = { ...common, ...perRepo.react };
 
 function mountEditor(program: Program, lang: Language = language as unknown as Language) {
   cy.mount(
-    <PocketixEditor
+    <IotixEditor
       language={lang}
       program={program}
       level={0}
@@ -34,7 +34,7 @@ function mountEditor(program: Program, lang: Language = language as unknown as L
   cy.get(sel.block).should("exist");
 }
 
-describe("PocketixEditor (shared cross-repo scenarios)", () => {
+describe("IotixEditor (shared cross-repo scenarios)", () => {
   it("renders sibling statements in order", () => {
     mountEditor(siblings as unknown as Program);
     scenarios.rendersStatementTitles(sel, ["Set Value", "Set Value"]);
@@ -101,7 +101,7 @@ describe("PocketixEditor (shared cross-repo scenarios)", () => {
 });
 
 // Regression test for the "can't hot-swap a loaded program after mount" bug
-// (see main report: PocketixEditor.tsx seeds program/visualProgram/textProgram
+// (see main report: IotixEditor.tsx seeds program/visualProgram/textProgram
 // via useState(props.X) once, with no useEffect to resync on prop changes).
 // This is inherently React-specific (re-rendering an already-mounted
 // component with new props), unlike the shared accordion-DOM scenarios above.
@@ -113,7 +113,7 @@ function ProgramSwapHarness() {
       <button data-testid="swap-to-empty" onClick={() => setProgram(empty as unknown as Program)}>
         Use Selected Program
       </button>
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={program}
         level={0}
@@ -123,7 +123,7 @@ function ProgramSwapHarness() {
   );
 }
 
-describe("PocketixEditor hot-swap", () => {
+describe("IotixEditor hot-swap", () => {
   it("updates the visible editor when a new program prop is loaded after mount", () => {
     cy.mount(<ProgramSwapHarness />);
 
@@ -152,7 +152,7 @@ function ParamEditHarness() {
       <button data-testid="undo" onClick={() => setProgram(singleCommandProgram as unknown as Program)}>
         Undo
       </button>
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={program}
         level={0}
@@ -165,7 +165,7 @@ function ParamEditHarness() {
 // Regression test for Expression.tsx never resyncing from props.expressionValue
 // (see main report: `expressionString` was seeded via useState(props.expressionValue)
 // once, with no useEffect to resync on prop changes — same missing-resync
-// pattern as PocketixEditor.tsx's program/language/settings, item 4).
+// pattern as IotixEditor.tsx's program/language/settings, item 4).
 //
 // Uses an "if" statement's *condition* rather than a command param: Block.tsx
 // keys CompoundStatement by `statement.id` (stable), but CmdStatement keys
@@ -190,7 +190,7 @@ function ExpressionSwapHarness() {
       >
         Swap
       </button>
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={program}
         level={0}
@@ -269,7 +269,7 @@ describe("CmdStatement per-param vs whole-statement removal", () => {
 // modal's state). Fixed behavior: analytics/the modal are opt-in via
 // settings.analytics.enabled (default false, see defaultSettings.ts), and
 // agreeing persists to localStorage so it isn't shown again.
-const CONSENT_STORAGE_KEY = "pocketix-editor-analytics-consent";
+const CONSENT_STORAGE_KEY = "iotix-editor-analytics-consent";
 const analyticsEnabledSettings = { analytics: { enabled: true }, common: { manualSync: false } } as EditorSettings;
 
 describe("Analytics consent", () => {
@@ -284,7 +284,7 @@ describe("Analytics consent", () => {
 
   it("shows the consent modal when analytics is enabled and not yet consented", () => {
     cy.mount(
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={siblings as unknown as Program}
         level={0}
@@ -297,7 +297,7 @@ describe("Analytics consent", () => {
 
   it("hides the modal after agreeing and persists consent across remounts", () => {
     cy.mount(
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={siblings as unknown as Program}
         level={0}
@@ -313,7 +313,7 @@ describe("Analytics consent", () => {
 
     // Remount (simulating a page reload) - consent should already be recorded.
     cy.mount(
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={siblings as unknown as Program}
         level={0}
@@ -326,7 +326,7 @@ describe("Analytics consent", () => {
 });
 
 // Regression tests for the "defaultSettings.textEditor.enabled is unreachable"
-// bug (see main report: PocketixEditor.tsx used to force textEditor.enabled
+// bug (see main report: IotixEditor.tsx used to force textEditor.enabled
 // to false at mount/resync regardless of what props.settings/defaultSettings
 // said, so a consumer explicitly requesting the text editor visible on load
 // could never get it).
@@ -338,7 +338,7 @@ describe("Text editor visibility setting", () => {
 
   it("shows the text editor when explicitly enabled via settings", () => {
     cy.mount(
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={siblings as unknown as Program}
         level={0}
@@ -365,7 +365,7 @@ describe("TextEditor debounce race", () => {
     } as EditorSettings;
 
     cy.mount(
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={siblings as unknown as Program}
         level={0}
@@ -462,7 +462,7 @@ describe("Root-level add-statement suggestions", () => {
 // Regression test for "id-bearing vs id-stripped program view asymmetry"
 // (see main report: onProgramChange received the id-bearing program while
 // the text editor's own view of the same program has ids stripped -
-// PocketixEditor.tsx generates ids purely as an internal React-key
+// IotixEditor.tsx generates ids purely as an internal React-key
 // concern from an id-less props.program on every mount, and the host never
 // supplied them, so they should never be handed back either).
 function hasAnyId(node: unknown): boolean {
@@ -501,7 +501,7 @@ describe("onProgramChange id stripping", () => {
     const onProgramChange = cy.stub().as("onProgramChange");
 
     cy.mount(
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={siblings as unknown as Program}
         level={0}
@@ -521,18 +521,18 @@ describe("onProgramChange id stripping", () => {
 });
 
 // Regression test for "undo()/redo() crash on an empty stack" (see main
-// report - filed against pocketixng, but PocketixEditor.tsx's undo()/redo()
+// report - filed against iotixng, but IotixEditor.tsx's undo()/redo()
 // had the exact same defect: `newUndoList.pop()` on an empty array is
 // `undefined`, and `JSON.parse(undefined)` throws. The Undo/Redo buttons are
 // `disabled` while their list is empty, which is the only guard that existed
 // before this fix - not a guard against programmatic invocation. This forces
-// the button enabled to exercise undo()/redo() directly, matching pocketixng's
+// the button enabled to exercise undo()/redo() directly, matching iotixng's
 // own `expect(() => component.undo()).to.not.throw()` regression test in
 // spirit (React exposes no equivalent direct method call).
-describe("PocketixEditor undo/redo empty-stack guard", () => {
+describe("IotixEditor undo/redo empty-stack guard", () => {
   it("does not throw when the Undo button is invoked with an empty undo stack", () => {
     cy.mount(
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={siblings as unknown as Program}
         level={0}
@@ -549,7 +549,7 @@ describe("PocketixEditor undo/redo empty-stack guard", () => {
 
   it("does not throw when the Redo button is invoked with an empty redo stack", () => {
     cy.mount(
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={siblings as unknown as Program}
         level={0}
@@ -579,7 +579,7 @@ describe("CmdStatement structure param edit propagation", () => {
     const onProgramChange = cy.stub().as("onProgramChange");
 
     cy.mount(
-      <PocketixEditor
+      <IotixEditor
         language={language as unknown as Language}
         program={structureParams as unknown as Program}
         level={0}
