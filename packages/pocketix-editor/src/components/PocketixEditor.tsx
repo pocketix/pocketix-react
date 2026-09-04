@@ -134,6 +134,10 @@ const PocketixEditor = (props: {
   };
 
   const undo = () => {
+    if (undoList.length === 0) {
+      return;
+    }
+
     captureAnalyticsEvent('undo_action', {
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'
@@ -147,6 +151,10 @@ const PocketixEditor = (props: {
   };
 
   const redo = () => {
+    if (redoList.length === 0) {
+      return;
+    }
+
     captureAnalyticsEvent('redo_action', {
       timestamp: new Date().toISOString(),
       vpl_version: 'vpl_old'

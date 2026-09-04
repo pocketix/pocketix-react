@@ -519,3 +519,81 @@ describe("onProgramChange id stripping", () => {
     });
   });
 });
+
+// Regression test for "undo()/redo() crash on an empty stack" (see main
+// report - filed against pocketixng, but PocketixEditor.tsx's undo()/redo()
+// had the exact same defect: `newUndoList.pop()` on an empty array is
+// `undefined`, and `JSON.parse(undefined)` throws. The Undo/Redo buttons are
+// `disabled` while their list is empty, which is the only guard that existed
+// before this fix - not a guard against programmatic invocation. This forces
+// the button enabled to exercise undo()/redo() directly, matching pocketixng's
+// own `expect(() => component.undo()).to.not.throw()` regression test in
+// spirit (React exposes no equivalent direct method call).
+describe("PocketixEditor undo/redo empty-stack guard", () => {
+  it("does not throw when the Undo button is invoked with an empty undo stack", () => {
+    cy.mount(
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={siblings as unknown as Program}
+        level={0}
+        onProgramChange={() => {}}
+        settings={{ menu: { enableUndo: true, enableRedo: true }, visualEditor: { enabled: true }, common: { manualSync: false } } as EditorSettings}
+      />
+    );
+
+    cy.get("button:has(.pi-undo)").should("be.disabled");
+    cy.get("button:has(.pi-undo)").invoke("prop", "disabled", false).click({ force: true });
+
+    cy.get(sel.block).should("exist");
+  });
+
+  it("does not throw when the Redo button is invoked with an empty redo stack", () => {
+    cy.mount(
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={siblings as unknown as Program}
+        level={0}
+        onProgramChange={() => {}}
+        settings={{ menu: { enableUndo: true, enableRedo: true }, visualEditor: { enabled: true }, common: { manualSync: false } } as EditorSettings}
+      />
+    );
+
+    cy.get("button:has(.pi-refresh)").should("be.disabled");
+    cy.get("button:has(.pi-refresh)").invoke("prop", "disabled", false).click({ force: true });
+
+    cy.get(sel.block).should("exist");
+  });
+});
+
+// Regression test for the other half of "structure-type command params being
+// unrenderable/unbound" (see main report): rendersBoundStructureParamValues
+// above only proves the INITIAL bound value renders correctly. This proves
+// editing one of those values actually round-trips all the way out through
+// onProgramChange, not just updating some local/uncontrolled copy. Expression's
+// plain <input class="input-field"> only calls onExpressionValueChanged on
+// blur/dialog-Ok (see Expression.tsx) - typing alone only updates its own
+// local display state - so this blurs the field to commit the edit, mirroring
+// how a real user moves focus away after typing.
+describe("CmdStatement structure param edit propagation", () => {
+  it("emits an updated program after editing a structure-type param value", () => {
+    const onProgramChange = cy.stub().as("onProgramChange");
+
+    cy.mount(
+      <PocketixEditor
+        language={language as unknown as Language}
+        program={structureParams as unknown as Program}
+        level={0}
+        onProgramChange={onProgramChange}
+        settings={{ visualEditor: { enabled: true }, common: { manualSync: false } } as EditorSettings}
+      />
+    );
+
+    cy.get(sel.expressionInput).eq(1).clear().type("42", { delay: 0 }).blur();
+
+    cy.get("@onProgramChange").should("have.been.called");
+    cy.get("@onProgramChange").then((stub: any) => {
+      const emitted = stub.lastCall.args[0];
+      expect(emitted.block[0].params[1]).to.equal("42");
+    });
+  });
+});
