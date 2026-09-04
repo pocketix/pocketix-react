@@ -65,10 +65,9 @@ describe("PocketixEditor (shared cross-repo scenarios)", () => {
   });
 
   // Regression test for the "_" root-statement crash bug (see main report:
-  // Block.tsx's root "+" button reads language.statements["_"] with no `?.`
-  // guard, unlike every other lookup in the same file). Currently expected
-  // to fail/crash until that's fixed — enable once B10 is patched.
-  it.skip("does not crash when the language has no '_' root entry", () => {
+  // Block.tsx's root "+" button read language.statements["_"] with no `?.`
+  // guard, unlike every other lookup in the same file).
+  it("does not crash when the language has no '_' root entry", () => {
     mountEditor(empty as unknown as Program, languageMissingRoot as unknown as Language);
     scenarios.rootAddButtonRendersWithoutCrashing(sel);
   });

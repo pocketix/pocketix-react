@@ -163,9 +163,9 @@ const Block = (props: {
                             key={statement.id} />;
         })}
         <Button  icon="pi pi-plus" onClick={() => setDialogVisible(true)} style={{
-          backgroundColor: props.language.statements[parent.name].backgroundColor,
-          borderColor: props.language.statements[parent.name].color,
-          color: props.language.statements[parent.name].color
+          backgroundColor: props.language.statements[parent.name]?.backgroundColor ?? props.language.err.backgroundColor,
+          borderColor: props.language.statements[parent.name]?.color ?? props.language.err.color,
+          color: props.language.statements[parent.name]?.color ?? props.language.err.color
         }} />
       </div>
       <Dialog onHide={() => {
