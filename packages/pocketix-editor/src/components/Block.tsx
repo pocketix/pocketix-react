@@ -14,6 +14,7 @@ import { Dialog } from "primereact/dialog";
 import { useEffect, useState } from "react";
 import { AutoComplete } from "primereact/autocomplete";
 import { captureAnalyticsEvent } from "../util/analytics";
+import { generateRandomId } from "../util/makeId";
 
 const Block = (props: {
   block: LanguageBlock,
@@ -58,6 +59,7 @@ const Block = (props: {
     }
 
     const newBlock = [...block, {
+      id: generateRandomId(),
       name: selectedItem.name || "",
       condition: undefined,
       params: [],

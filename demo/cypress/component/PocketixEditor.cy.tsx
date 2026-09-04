@@ -391,3 +391,37 @@ describe("TextEditor debounce race", () => {
     });
   });
 });
+
+// Regression test for "new statements have no id until commit" (see main
+// report: Block.tsx's add() built the new statement without an `id` field,
+// so every statement added before a parent generateIds()/commit round-trip
+// rendered with key={undefined} - a duplicate key once a second one is
+// added the same way). Asserts on React's own dev warning rather than a
+// plain element count, since the DOM still renders both nodes either way.
+describe("Adding statements assigns an id immediately", () => {
+  it("does not trigger a React duplicate-key warning when adding two statements before any commit round-trip", () => {
+    cy.window().then((win) => {
+      cy.spy(win.console, "error").as("consoleError");
+    });
+
+    mountEditor(empty as unknown as Program);
+
+    const addOneStatement = () => {
+      cy.get(sel.addStatementButton).click();
+      cy.get(".p-autocomplete-dropdown").click();
+      cy.get(".p-autocomplete-item").first().click();
+      cy.contains("button", "Add").click();
+    };
+
+    addOneStatement();
+    addOneStatement();
+
+    cy.get(`${sel.block} ${sel.accordion}`).should("have.length", 2);
+
+    cy.get("@consoleError").then((spy: any) => {
+      const messages = spy.getCalls().map((call: any) => call.args.join(" "));
+      const hasKeyWarning = messages.some((m: string) => m.includes("key"));
+      expect(hasKeyWarning, `console.error calls: ${JSON.stringify(messages)}`).to.equal(false);
+    });
+  });
+});

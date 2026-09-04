@@ -35,4 +35,4 @@ function removeIds(program: Program): Program {
   return { block: removeIdsRecursive(program.block) };
 }
 
-export {generateIds, removeIds}
+export {generateIds, removeIds, generateRandomId}
