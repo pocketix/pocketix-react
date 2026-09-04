@@ -2,11 +2,11 @@
   "name": "iotix-react-monorepo",
   "version": "1.0.0",
   "scripts": {
-	"build:lib": "npm run build --workspace packages/iotix-editor",
-	"build:demo": "npm run build --workspace demo",
-	"start:demo": "npm run start --workspace demo",
-	"install:all": "npm ci --maxsockets 1 --workspace packages/iotix-editor && npm ci --maxsockets 1 --workspace demo && npm ci --maxsockets 1",
-	"test:component": "npm run build:lib && npm run cypress:run --workspace demo"
+    "build:lib": "npm run build --workspace packages/iotix-editor",
+    "build:demo": "npm run build --workspace demo",
+    "start:demo": "npm run start --workspace demo",
+    "install:all": "npm ci --maxsockets 1 --workspace packages/iotix-editor && npm ci --maxsockets 1 --workspace demo && npm ci --maxsockets 1",
+    "test:component": "npm run build:lib && npm run cypress:run --workspace demo"
   },
   "author": "Petr John",
   "contributors": [
@@ -22,8 +22,16 @@
   ],
   "license": "MIT",
   "bugs": {
-	"url": "https://github.com/pocketix/iotix-react/issues"
+    "url": "https://github.com/pocketix/iotix-react/issues"
   },
   "homepage": "https://github.com/pocketix/iotix-react#readme",
-  "workspaces": ["packages/*", "demo"]
+  "workspaces": [
+    "packages/*",
+    "demo"
+  ],
+  "allowScripts": {
+    "cypress@16.0.0": true,
+    "core-js@3.50.0": true,
+    "core-js-pure@3.50.0": true
+  }
 }

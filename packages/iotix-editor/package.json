@@ -9,7 +9,7 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c --configPlugin @rollup/plugin-typescript",
     "postinstall": "npm run build",
     "prepublishOnly": "npm run build"
   },
@@ -28,32 +28,32 @@
   },
   "homepage": "https://github.com/pocketix/iotix-react#readme",
   "dependencies": {
-    "@rollup/plugin-commonjs": "^28.0.3",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "@rollup/plugin-typescript": "^12.1.2",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.86",
-    "@types/react": "^18.2.61",
-    "@types/react-dom": "^18.2.19",
-    "eslint": "^8.57.0",
+    "@rollup/plugin-commonjs": "^29.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "eslint": "^8.57.1",
     "eslint-plugin-node": "^11.1.0",
     "jsep": "^1.4.0",
-    "posthog-js": "^1.363.4",
+    "posthog-js": "^1.427.2",
     "primeicons": "^6.0.1",
     "primereact": "^10.5.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "react-scripts": "5.0.1",
-    "rollup": "^2.79.2",
+    "rollup": "^4.63.1",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "typescript": "^6.0.3",
+    "web-vitals": "^6.2.1"
   },
   "devDependencies": {
-    "@types/rollup-plugin-peer-deps-external": "^2.2.5",
+    "@types/rollup-plugin-peer-deps-external": "^2.2.6",
     "rollup-plugin-postcss": "^4.0.2"
   }
 }

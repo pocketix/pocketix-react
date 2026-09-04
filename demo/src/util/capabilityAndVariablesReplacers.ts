@@ -14,8 +14,8 @@ function replaceWholeToken(text: string, from: string, to: string): string {
         return text;
     }
 
-    const escaped = from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const pattern = new RegExp(`(?<![\\w.])${escaped}(?![\\w.])`, 'g');
+    const escaped = from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const pattern = new RegExp(`(?<![\\w.])${escaped}(?![\\w.])`, "g");
 
     return text.replace(pattern, to);
 }
