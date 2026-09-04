@@ -481,6 +481,21 @@ function hasAnyId(node: unknown): boolean {
   return false;
 }
 
+// Regression test for "setRecommendedStatements called inside loop instead
+// of after" (see main report: Block.tsx's searchSuggestions() called the
+// state setter once per language.statements entry with a single array
+// mutated in place across iterations, instead of once after the loop with
+// the finished list).
+describe("Block search suggestions", () => {
+  it("lists every statement matching the query, not just the first match", () => {
+    mountEditor(empty as unknown as Program);
+
+    cy.get(sel.addStatementButton).click();
+    cy.get(".p-autocomplete-dropdown").click();
+    cy.get(".p-autocomplete-item").should("have.length", Object.keys(language.statements).length);
+  });
+});
+
 describe("onProgramChange id stripping", () => {
   it("emits a program with no id fields after a visual edit", () => {
     const onProgramChange = cy.stub().as("onProgramChange");

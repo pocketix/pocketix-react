@@ -37,20 +37,14 @@ const Block = (props: {
   }, [props.block]);
 
   const searchSuggestions = (query: string) => {
-    const suggestions: StatementModel[] = [];
-
-    Object.entries(props.language.statements).forEach(([key, val]) => {
-      if ((!val.levels || val.levels.includes(props.level)) &&
+    const suggestions = Object.entries(props.language.statements)
+      .filter(([key, val]) => (!val.levels || val.levels.includes(props.level)) &&
         (!val.avoidLevels || !val.avoidLevels.includes(props.level)) &&
         (!val.parents || val.parents.includes(parent.name)) &&
-        (!val.avoidParents || !val.avoidParents.includes(parent.name)) && key.startsWith(query)) {
-        suggestions.push({
-          ...val
-        });
-      }
+        (!val.avoidParents || !val.avoidParents.includes(parent.name)) && key.startsWith(query))
+      .map(([, val]) => ({...val}));
 
-      setRecommendedStatements(suggestions);
-    });
+    setRecommendedStatements(suggestions);
   };
 
   const add = () => {
