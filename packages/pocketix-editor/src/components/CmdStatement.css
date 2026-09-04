@@ -4,7 +4,3 @@
     align-items: center;
     gap: 5px;
 }
-
-.input-expr {
-    flex-grow: 1;
-}
