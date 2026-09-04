@@ -1,4 +1,4 @@
-const CONSENT_STORAGE_KEY = "pocketix-editor-analytics-consent";
+const CONSENT_STORAGE_KEY = "iotix-editor-analytics-consent";
 
 /** Guards every localStorage access - unavailable in SSR/privacy-mode contexts. */
 function hasStoredConsent(): boolean {

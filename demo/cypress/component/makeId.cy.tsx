@@ -1,5 +1,5 @@
-import { generateIds } from "../../../packages/pocketix-editor/src/util/makeId";
-import type { Program } from "../../../packages/pocketix-editor/src/model/language.model";
+import { generateIds } from "../../../packages/iotix-editor/src/util/makeId";
+import type { Program } from "../../../packages/iotix-editor/src/model/language.model";
 
 // Regression test for "no id-collision detection in util/makeId.ts" (see
 // main report: a caller-supplied program with pre-existing duplicate ids

@@ -1,11 +1,11 @@
 {
-  "name": "pocketix-react-monorepo",
+  "name": "iotix-react-monorepo",
   "version": "1.0.0",
   "scripts": {
-	"build:lib": "npm run build --workspace packages/pocketix-editor",
+	"build:lib": "npm run build --workspace packages/iotix-editor",
 	"build:demo": "npm run build --workspace demo",
 	"start:demo": "npm run start --workspace demo",
-	"install:all": "npm ci --maxsockets 1 --workspace packages/pocketix-editor && npm ci --maxsockets 1 --workspace demo && npm ci --maxsockets 1",
+	"install:all": "npm ci --maxsockets 1 --workspace packages/iotix-editor && npm ci --maxsockets 1 --workspace demo && npm ci --maxsockets 1",
 	"test:component": "npm run build:lib && npm run cypress:run --workspace demo"
   },
   "author": "Petr John",
@@ -22,8 +22,8 @@
   ],
   "license": "MIT",
   "bugs": {
-	"url": "https://github.com/pocketix/pocketix-react/issues"
+	"url": "https://github.com/pocketix/iotix-react/issues"
   },
-  "homepage": "https://github.com/pocketix/pocketix-react#readme",
+  "homepage": "https://github.com/pocketix/iotix-react#readme",
   "workspaces": ["packages/*", "demo"]
 }

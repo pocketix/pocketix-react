@@ -1,5 +1,5 @@
 import { Device } from "../generated";
-import { Variable } from "pocketix-react/dist/types/model/meta-language.model";
+import { Variable } from "iotix-react/dist/types/model/meta-language.model";
 
 const createVariablesFromDevice = (device: Device): Variable[] => {
   // Matches createCapabilitiesFromDeviceAndCapabilityTemplate.ts's

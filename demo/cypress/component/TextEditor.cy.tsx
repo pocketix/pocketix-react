@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextEditor } from "../../../packages/pocketix-editor/src/components/TextEditor";
+import { TextEditor } from "../../../packages/iotix-editor/src/components/TextEditor";
 
 // Regression test for "debounce timer never cleared on unmount" (see main
 // report: a component destroyed mid-debounce still fires its callback later

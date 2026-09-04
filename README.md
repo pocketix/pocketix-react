@@ -1,8 +1,8 @@
-# **pocketix-react**
+# **iotix-react**
 A block- and form-based visual programming editor for smart home automation built for React [Try it out](https://pocketix-react.iot.petr-john.cz/)!
 
 ## **Overview**
-**pocketix-react** is part of the broader **Pocketix** project — a visual programming language (VPL) designed for automating IoT and smart home devices. It enables users to design automation flows through drag-and-drop blocks and configurable forms, making it approachable for non-programmers.
+**iotix-react** is part of the broader **IoTiX** project — a visual programming language (VPL) designed for automating IoT and smart home devices. It enables users to design automation flows through drag-and-drop blocks and configurable forms, making it approachable for non-programmers.
 
 Originally developed in collaboration with [Logimic](https://www.logimic.com/cs/) for the project *Services for Water Management and Monitoring Systems in Retention Basins*, the editor continues under development by [Petr John](https://www.fit.vut.cz/person/ijohn/.en) and [Jiří Hynek](https://www.fit.vut.cz/person/hynek/.en) at [BUT FIT](https://www.fit.vut.cz/.en).
 You can find more information about the project on the [Pocketix Organization on GitHub](https://github.com/pocketix).
@@ -14,13 +14,13 @@ You can find more information about the project on the [Pocketix Organization on
 ✅ Supports the v1 language version
 
 ## **Installation**
-To get started with `pocketix-react`, you’ll need [Node.js](https://nodejs.org/en/) (v20 or later) and [npm](https://www.npmjs.com/).
+To get started with `iotix-react`, you’ll need [Node.js](https://nodejs.org/en/) (v20 or later) and [npm](https://www.npmjs.com/).
 
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/pocketix/pocketix-react.git  
-cd pocketix-react
+git clone https://github.com/pocketix/iotix-react.git  
+cd iotix-react
 ```
 
 ### Step 2: Install Dependencies
@@ -41,9 +41,9 @@ The app provides a visual editor for creating and managing automation rules. Use
 - Save, test, and iterate on automation flows without writing code
 
 ## **Related Projects**
-- 🔗 [vpl-for-things](https://github.com/pocketix/vpl-for-things) — WIP version of new editor built in Lit compatible with Pocketix v2 language
-- 🔗 [pocketixng](https://github.com/pocketix/pocketixng) — A code-oriented Angular editor for IoT automation using the Pocketix v1 scripting language
-- 🔗 [Pocketix Node Interpreter](https://github.com/pocketix/pocketix-node) — Executes automation scripts created with Pocketix tools
+- 🔗 [vpl-for-things](https://github.com/pocketix/vpl-for-things) — WIP version of new editor built in Lit compatible with IoTiX v2 language
+- 🔗 [iotixng](https://github.com/pocketix/iotixng) — A code-oriented Angular editor for IoT automation using the IoTiX v1 scripting language
+- 🔗 [IoTiX Core Interpreter](https://github.com/pocketix/iotix-core) — Executes automation scripts created with IoTiX tools
 - 🔗 [Pocketix Node Core](https://github.com/pocketix/pocketix-node-core) — A simple environment for basic IoT management
 
 ## **Contributing**

@@ -13,7 +13,7 @@
     "axios": "^1.6.8",
     "eslint": "^8.57.0",
     "eslint-plugin-node": "^11.1.0",
-    "pocketix-react": "*",
+    "iotix-react": "file:../packages/iotix-editor",
     "primeicons": "^6.0.1",
     "primereact": "^10.5.1",
     "react": "^18.2.0",

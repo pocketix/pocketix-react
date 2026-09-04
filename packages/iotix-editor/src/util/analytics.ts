@@ -1,13 +1,13 @@
 import posthog from "posthog-js";
 
 const POSTHOG_KEY = "phc_Rnee6Qq5vgXvJ5NCh2ls9RIFvWgpO83bjuUb53yvss2";
-const POSTHOG_HOST = "https://posthog.pocketix.org";
+const POSTHOG_HOST = "https://posthog.iotix.org";
 
 let consented = false;
 let initialized = false;
 
 /**
- * Called by PocketixEditor whenever the end user's consent status is known
+ * Called by IotixEditor whenever the end user's consent status is known
  * (settings.analytics.enabled AND the consent modal has been agreed to).
  * posthog.init() only ever runs once consent is actually granted - never as
  * an import-time side effect.

@@ -1,5 +1,5 @@
-import {Statement, Variable} from "pocketix-react/dist/types/model/meta-language.model";
-import {Program} from "pocketix-react/dist/types/model/language.model";
+import {Statement, Variable} from "iotix-react/dist/types/model/meta-language.model";
+import {Program} from "iotix-react/dist/types/model/language.model";
 
 // A plain `.replaceAll(from, to)` has no boundary anchoring, so an id/label
 // that's a string-prefix (or substring) of another id/label gets partially
