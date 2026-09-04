@@ -8,6 +8,7 @@ import { Language, Variable } from "../model/meta-language.model";
 import { InputText } from "primereact/inputtext";
 import { preventDefaults } from "../util/preventDefaults";
 import { captureAnalyticsEvent } from "../util/analytics";
+import { isValidExpressionSyntax } from "../util/checkExpressionSyntax";
 
 const Expression = (props: {
   language: Language,
@@ -19,7 +20,7 @@ const Expression = (props: {
 }) => {
   const variables = props.language.variables;
   const [visible, setVisible] = useState(false);
-  const [syntaxError] = useState(false);
+  const [syntaxError, setSyntaxError] = useState(false);
   const [expressionString, setExpressionString] = useState(props.expressionValue?.toString() ? props.expressionValue : "");
   const [selectedVariable, setSelectedVariable] = useState({} as Variable);
   const textAreaRef = useRef({} as HTMLTextAreaElement);
@@ -55,6 +56,7 @@ const Expression = (props: {
 
   const updateExpression = (value: string) => {
     setExpressionString(value);
+    setSyntaxError(!isValidExpressionSyntax(value));
     setIsChanged(true);
   };
 
@@ -89,9 +91,9 @@ const Expression = (props: {
   };
 
   const footer = <>
-    <Button  label="Cancel" icon="pi pi-times" disabled={syntaxError} onClick={() => setVisible(false)}
+    <Button  label="Cancel" icon="pi pi-times" onClick={() => setVisible(false)}
             className="p-button-text" />
-    <Button  label="Ok" icon="pi pi-check" onClick={setExpressionAndClose} autoFocus />
+    <Button  label="Ok" icon="pi pi-check" disabled={syntaxError} onClick={setExpressionAndClose} autoFocus />
   </>;
 
   const header = <>
@@ -103,7 +105,7 @@ const Expression = (props: {
       <div className="p-inputgroup">
         <InputText className="input-field" value={expressionString} onChange={(e) => updateExpression(e.target.value)}
                    onClick={preventDefaults} onBlur={(e) => onBlur(e.target.value)}/>
-        <Button  icon="pi pi-ellipsis-h" disabled={syntaxError} onClick={(event) => {
+        <Button  icon="pi pi-ellipsis-h" onClick={(event) => {
           setVisible(true);
           preventDefaults(event);
           handleDialogSpie();
