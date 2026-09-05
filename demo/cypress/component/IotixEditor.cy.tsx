@@ -574,7 +574,7 @@ describe("IotixEditor undo/redo empty-stack guard", () => {
 // blur/dialog-Ok (see Expression.tsx) - typing alone only updates its own
 // local display state - so this blurs the field to commit the edit, mirroring
 // how a real user moves focus away after typing.
-describe("CmdStatement structure param edit propagation", () => {
+describe("CmdStatement structure param edit propagation (shared cross-repo scenario)", () => {
   it("emits an updated program after editing a structure-type param value", () => {
     const onProgramChange = cy.stub().as("onProgramChange");
 
@@ -588,12 +588,34 @@ describe("CmdStatement structure param edit propagation", () => {
       />
     );
 
-    cy.get(sel.expressionInput).eq(1).clear().type("42", { delay: 0 }).blur();
-
-    cy.get("@onProgramChange").should("have.been.called");
-    cy.get("@onProgramChange").then((stub: any) => {
-      const emitted = stub.lastCall.args[0];
-      expect(emitted.block[0].params[1]).to.equal("42");
+    scenarios.editsStructureParamAndEmitsProgramChange(sel, {
+      value: "42",
+      commit: () => cy.get(sel.expressionInput).eq(1).blur(),
     });
+  });
+});
+
+// Regression test for "mobile-responsive default state inverted between
+// platforms" (see main report: iotix-react defaults to showing the visual
+// editor pane on mobile, iotixng defaulted to showing the text editor pane
+// instead - same product, opposite default behavior on a phone). Shared
+// with iotixng's equivalent check in IotixVpProgram.cy.ts.
+describe("IotixEditor mobile-responsive defaults (shared cross-repo scenario)", () => {
+  it("shows the visual editor and hides the text editor by default", () => {
+    cy.mount(
+      <IotixEditor
+        language={language as unknown as Language}
+        program={siblings as unknown as Program}
+        level={0}
+        onProgramChange={() => {}}
+        settings={{
+          visualEditor: { enabled: true },
+          textEditor: { enabled: true, style: {} },
+          common: { manualSync: false },
+        } as EditorSettings}
+      />
+    );
+
+    scenarios.showsVisualPaneHidesTextPaneByDefault();
   });
 });
